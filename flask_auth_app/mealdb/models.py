@@ -6,3 +6,5 @@ class User(db.Model, UserMixin):
     user_id = db.Column(db.Integer, primary_key=True)  # Matches the schema
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)  # Plain-text password
+    def get_id(self):
+        return str(self.user_id)
