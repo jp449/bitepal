@@ -2,14 +2,17 @@ from flask import Blueprint, render_template, redirect, url_for, flash
 from .forms import RegistrationForm, LoginForm
 from .models import User
 from . import db
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 #subpages defined
 
 main = Blueprint('main', __name__)
 @main.route('/')
 def home():
-    return "Welcome to the Home Page!"
+    return '''
+        <h1> Welcome to the Home Page!</h1>
+        <a href = "/login">Logout</a>
+    '''
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -48,6 +51,12 @@ def login():
         
     return render_template('login.html', form = form)
 
+@main.route("/logout", methods=['GET', 'POST'])
+def logout():
+    logout_user()
+    flash("You have been logged out.")
+    return redirect(url_for("main.login"))
+    
 @main.route('/test-db')
 def test_db():
     try:
