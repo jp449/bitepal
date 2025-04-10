@@ -4,7 +4,11 @@ from .models import User
 from . import db
 
 # Define a blueprint for routes
+
 main = Blueprint('main', __name__)
+@main.route('/')
+def home():
+    return "Welcome to the Home Page!"
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -27,3 +31,8 @@ def register():
         return redirect(url_for('main.login'))
     
     return render_template('register.html', form=form)
+
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    # Login logic here
+    return "Login Page"
