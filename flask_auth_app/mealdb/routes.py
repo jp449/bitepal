@@ -36,3 +36,12 @@ def register():
 def login():
     # Login logic here
     return "Login Page"
+
+@main.route('/test-db')
+def test_db():
+    try:
+        # Perform a simple query to check the connection
+        users = User.query.all()  # Fetch all users from the 'users' table
+        return f"Database connected! Found {len(users)} users."
+    except Exception as e:
+        return f"Database connection failed: {str(e)}"
