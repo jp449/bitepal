@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Recipes</title>
+</head>
+<body>
+    <h1>Your Recipes</h1>
+    {% if recipes %}
+        <ul>
+        {% for recipe in recipes %}
+            <li>
+                <h2>{{ recipe.title }}</h2>
+                <p>Calories:{{ recipe.calories }}</p>
+                <p>Category:{{ recipe.region_category }}</p>
+                <p>Servings:{{ recipe.servings }}</p>
+                <p>Instructions: {{ recipe.instructions }}</p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven’t created any recipes yet.</p>
+    {% endif %}
+</body>
+</html>

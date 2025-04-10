@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome</title>
+</head>
+<body>
+    <h1>hi, {{ current_user.username }}!</h1>
+    <a href="{{ url_for('main.my_recipes') }}">
+        <button>View My Recipes</button>
+    </a>
+</body>
+</html>

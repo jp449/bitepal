@@ -1,18 +1,17 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from .forms import RegistrationForm, LoginForm
-from .models import User
+from .models import Recipe, User
 from . import db
-from flask_login import login_user, logout_user
+
+from flask_login import login_user,  login_required, current_user
 
 #subpages defined
 
 main = Blueprint('main', __name__)
 @main.route('/')
+@login_required
 def home():
-    return '''
-        <h1> Welcome to the Home Page!</h1>
-        <a href = "/login">Logout</a>
-    '''
+    return render_template('home.html')
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -48,7 +47,6 @@ def login():
             return redirect(url_for('main.home'))
         else:
             flash('Login info incorrect.')
-        
     return render_template('login.html', form = form)
 
 @main.route("/logout", methods=['GET', 'POST'])
@@ -56,7 +54,8 @@ def logout():
     logout_user()
     flash("You have been logged out.")
     return redirect(url_for("main.login"))
-    
+ 
+
 @main.route('/test-db')
 def test_db():
     try:
@@ -65,3 +64,11 @@ def test_db():
         return f"Database connected! Found {len(users)} users."
     except Exception as e:
         return f"Database connection failed: {str(e)}"
+    
+
+@main.route('/my_recipes')
+@login_required
+def my_recipes():
+    recipes = Recipe.query.filter_by(user_id=current_user.user_id).all()
+    return render_template('my_recipes.html', recipes=recipes)
+
