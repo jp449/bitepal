@@ -2,8 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash
 from .forms import RegistrationForm, LoginForm
 from .models import User
 from . import db
+from flask_login import login_user
 
-# Define a blueprint for routes
+#subpages defined
 
 main = Blueprint('main', __name__)
 @main.route('/')
@@ -34,8 +35,18 @@ def register():
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
-    # Login logic here
-    return "Login Page"
+    form = LoginForm()
+    if form.validate_on_submit():
+        #return user if in db already
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and user.password == form.password.data:
+            login_user(user)
+            flash('You are now logged in.')
+            return redirect(url_for('main.home'))
+        else:
+            flash('Login info incorrect.')
+        
+    return render_template('login.html', form = form)
 
 @main.route('/test-db')
 def test_db():
