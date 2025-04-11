@@ -87,7 +87,7 @@ def my_recipes():
 @login_required
 def view_recipes():
     recipes = Recipe.query.all()
-    return render_template('my_recipes.html', recipes=recipes)
+    return render_template('view_recipes.html', recipes=recipes)
 
 @main.route('/view_recipes/<int:recipe_id>')
 def recipe_page(recipe_id):
