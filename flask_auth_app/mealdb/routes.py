@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, logout_user, abort, request
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from .forms import RegistrationForm, LoginForm
 from .models import Recipe, User
 from . import db
 
-from flask_login import login_user,  login_required, current_user
+from flask_login import login_user,  login_required, current_user, logout_user
 from functools import wraps
 
 #admin only access message
