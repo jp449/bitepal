@@ -1,11 +1,21 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, logout_user
+from flask import Blueprint, render_template, redirect, url_for, flash, logout_user, abort
 from .forms import RegistrationForm, LoginForm
 from .models import Recipe, User
 from . import db
 
 from flask_login import login_user,  login_required, current_user
+from functools import wraps
 
-#subpages defined
+#admin only access message
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+#subpages defined-may need to modularize later
 
 main = Blueprint('main', __name__)
 @main.route('/')
