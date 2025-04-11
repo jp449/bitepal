@@ -10,6 +10,7 @@
         {% for recipe in recipes %}
             <li>
                 <h2>{{ recipe.title }}</h2>
+                <p>Recipe number:{{recipe.recipe_id}}</p>
                 <p>Calories:{{ recipe.calories }}</p>
                 <p>Category:{{ recipe.region_category }}</p>
                 <p>Servings:{{ recipe.servings }}</p>
@@ -20,5 +21,6 @@
     {% else %}
         <p>You haven’t created any recipes yet.</p>
     {% endif %}
+    
 </body>
 </html>

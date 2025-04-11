@@ -72,3 +72,15 @@ def my_recipes():
     recipes = Recipe.query.filter_by(user_id=current_user.user_id).all()
     return render_template('my_recipes.html', recipes=recipes)
 
+@main.route('/delete_recipe/<int:recipe_id>', methods=['POST'])
+@login_required
+def delete_recipe(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    if recipe.user_id == current_user.user_id:
+        db.session.delete(recipe)
+        db.session.commit()
+        flash('Recipe deleted successfully!', 'success')
+    else:
+        flash('You do not have permission to delete this recipe.', 'danger')
+        return redirect(url_for('main.my_recipes'))
+    return redirect(url_for('main.my_recipes'))
