@@ -109,3 +109,18 @@ def manage_users():
         else:
             flash(f"User {username} no found", 'danger')
     return render_template('admin_users.html', users = users)
+
+@main.route('/delete_recipe/<int:recipe_id>')
+@login_required
+def delete_recipe(recipe_id):
+    try:
+        recipe = Recipe.query.get_or_404(recipe_id)
+        db.session.delete(recipe)
+        db.session.commit()
+        flash("Recipe deleted successfully!")
+        return jsonify({'success': True, 'message': 'Recipe deleted successfully.'})
+    except Exception as e:
+        flash("not working")
+        print("Error deleting recipe:", str(e))
+    return redirect(url_for('main.my_recipes'))
+    
