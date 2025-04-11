@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, logout_user
+from flask import Blueprint, render_template, redirect, url_for, flash
 from .forms import RegistrationForm, LoginForm
 from .models import Recipe, User
 from . import db
@@ -73,3 +73,13 @@ def my_recipes():
     recipes = Recipe.query.filter_by(user_id=current_user.user_id).all()
     return render_template('my_recipes.html', recipes=recipes)
 
+@main.route('/view_recipes')
+@login_required
+def view_recipes():
+    recipes = Recipe.query.all()
+    return render_template('my_recipes.html', recipes=recipes)
+
+@main.route('/view_recipes/<int:recipe_id>')
+def recipe_page(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    return render_template('recipe.html', recipe=recipe)

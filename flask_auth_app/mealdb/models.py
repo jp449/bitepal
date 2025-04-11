@@ -50,4 +50,3 @@ class Recipe(db.Model):
     reviews = db.relationship('Reviews', back_populates='recipe', lazy=True)
 
 
-

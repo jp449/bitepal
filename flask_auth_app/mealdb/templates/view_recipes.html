@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>All Recipes</title>
+</head>
+<body>
+    <ul>
+        {% for recipe in recipes %}
+            <a href="{{ url_for('main.recipe_page', recipe_id=recipe.recipe_id) }}">
+    {{ recipe.title }}
+  </a> -by recipe.author.username
+    </ul>
+
+
+</body>
+</html>
