@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
 
     reviews = db.relationship('Reviews', back_populates='user')
 
+
 class Reviews(db.Model):
     __tablename__ = 'reviews'
     __table_args__ = (
@@ -49,5 +50,6 @@ class Recipe(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
 
     reviews = db.relationship('Reviews', back_populates='recipe', lazy=True)
+    author = db.relationship('User', backref='recipes')
 
 
