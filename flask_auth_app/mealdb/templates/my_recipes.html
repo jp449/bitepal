@@ -10,10 +10,24 @@
         {% for recipe in recipes %}
             <li>
                 <h2>{{ recipe.title }}</h2>
-                <p>Calories:{{ recipe.calories }}</p>
-                <p>Category:{{ recipe.region_category }}</p>
-                <p>Servings:{{ recipe.servings }}</p>
+                <p>Calories: {{ recipe.calories }}</p>
+                <p>Region: {{ recipe.region_category }}</p>
+                <p>Servings: {{ recipe.servings }}</p>
                 <p>Instructions: {{ recipe.instructions }}</p>
+
+                <h3>Reviews</h3>
+                {% if recipe.reviews %}
+                    <ul>
+                    {% for review in recipe.reviews %}
+                        <li>
+                            <h4>User: {{ review.user.username }} | Rating: {{ review.score }}/5</h4>
+                            <p>{{ review.review_text }}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No reviews yet.</p>
+                {% endif %}
             </li>
         {% endfor %}
         </ul>
