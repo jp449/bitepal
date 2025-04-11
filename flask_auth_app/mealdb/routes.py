@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, logout_user, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, logout_user, abort, request
 from .forms import RegistrationForm, LoginForm
 from .models import Recipe, User
 from . import db
@@ -83,3 +83,18 @@ def my_recipes():
     recipes = Recipe.query.filter_by(user_id=current_user.user_id).all()
     return render_template('my_recipes.html', recipes=recipes)
 
+@main.route('/admin/users', methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def manage_users():
+    users = User.query.all()
+    if request.method == 'POST':
+        username = request.form.get('username')
+        deleted_user = User.query.filter_by(username=username)
+        if deleted_user:
+            db.session.delete(deleted_user)
+            db.session.commit()
+            flash(f"User {username} deleted.", 'success')
+        else:
+            flash(f"User {username} no found", 'danger')
+    return render_template('admin_users.html', users = users)
