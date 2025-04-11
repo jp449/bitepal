@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, logout_user
 from .forms import RegistrationForm, LoginForm
 from .models import Recipe, User
 from . import db
@@ -50,6 +50,7 @@ def login():
     return render_template('login.html', form = form)
 
 @main.route("/logout", methods=['GET', 'POST'])
+@login_required
 def logout():
     logout_user()
     flash("You have been logged out.")
