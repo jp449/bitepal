@@ -15,6 +15,7 @@
                 <p>Category:{{ recipe.region_category }}</p>
                 <p>Servings:{{ recipe.servings }}</p>
                 <p>Instructions: {{ recipe.instructions }}</p>
+                <a href="{{ url_for('main.delete_recipe', recipe_id=recipe.recipe_id) }}">Delete</a>
             </li>
         {% endfor %}
         </ul>

@@ -49,7 +49,7 @@ def login():
             flash('Login info incorrect.')
     return render_template('login.html', form = form)
 
-@main.route("/logout", methods=['GET', 'POST'])
+@main.route("/logout", methods=[ 'POST'])
 def logout():
     logout_user()
     flash("You have been logged out.")
@@ -72,15 +72,17 @@ def my_recipes():
     recipes = Recipe.query.filter_by(user_id=current_user.user_id).all()
     return render_template('my_recipes.html', recipes=recipes)
 
-@main.route('/delete_recipe/<int:recipe_id>', methods=['POST'])
+@main.route('/delete_recipe/<int:recipe_id>')
 @login_required
 def delete_recipe(recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)
-    if recipe.user_id == current_user.user_id:
+    try:
+        recipe = Recipe.query.get_or_404(recipe_id)
         db.session.delete(recipe)
         db.session.commit()
-        flash('Recipe deleted successfully!', 'success')
-    else:
-        flash('You do not have permission to delete this recipe.', 'danger')
-        return redirect(url_for('main.my_recipes'))
+        flash("Recipe deleted successfully!")
+        return jsonify({'success': True, 'message': 'Recipe deleted successfully.'})
+    except Exception as e:
+        flash("not working")
+        print("Error deleting recipe:", str(e))
     return redirect(url_for('main.my_recipes'))
+    
