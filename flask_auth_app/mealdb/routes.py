@@ -123,3 +123,29 @@ def delete_recipe(recipe_id):
         print("Error deleting recipe:", str(e))
     return redirect(url_for('main.my_recipes'))
     
+@main.route('/create_recipe', methods=['GET', 'POST'])
+@login_required
+def create_recipe():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        calories = request.form.get('calories')
+        region_category = request.form.get('region_category')
+        instructions = request.form.get('instructions')
+        servings = request.form.get('servings')
+
+        new_recipe = Recipe(
+            title=title,
+            calories=calories,
+            region_category=region_category,
+            instructions=instructions,
+            servings=servings,
+            user_id=current_user.user_id
+        )
+        
+        db.session.add(new_recipe)
+        db.session.commit()
+        
+        flash("Recipe created successfully!")
+        return redirect(url_for('main.my_recipes'))
+    
+    return render_template('create_recipe.html')
