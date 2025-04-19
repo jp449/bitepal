@@ -35,6 +35,7 @@
     {% else %}
         <p>You haven’t created any recipes yet.</p>
     {% endif %}
+    <button><a href="{{ url_for('main.create_recipe')}}">Add New Recipe</a></button>
     
 </body>
 </html>
