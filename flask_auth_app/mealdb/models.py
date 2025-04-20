@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 
-class User(db.Model, UserMixin):
+class Users(db.Model, UserMixin):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)  # Matches the schema
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -35,11 +35,11 @@ class Reviews(db.Model):
     user_id: Mapped[int] = mapped_column(Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable = False)
     recipe_id: Mapped[int] = mapped_column(Integer)
 
-    recipe: Mapped['Recipes'] = relationship('Recipe', back_populates='reviews')
-    user: Mapped['Users'] = relationship('User', back_populates='reviews')
+    recipe: Mapped['Recipes'] = relationship('Recipes', back_populates='reviews')
+    user: Mapped['Users'] = relationship('Users', back_populates='reviews')
 
 
-class Recipe(db.Model):
+class Recipes(db.Model):
     __tablename__ = 'recipes'
     recipe_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -50,6 +50,6 @@ class Recipe(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
 
     reviews = db.relationship('Reviews', back_populates='recipe', lazy=True)
-    author = db.relationship('User', backref='recipes')
+    author = db.relationship('Users', backref='recipes')
 
 

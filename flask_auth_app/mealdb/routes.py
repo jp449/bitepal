@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from .forms import RegistrationForm, LoginForm
-from .models import Recipe, User
+from .models import Recipes, Users
 from . import db
 
 from flask_login import login_user,  login_required, current_user, logout_user
@@ -28,13 +28,13 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         # Check if user already in db
-        existing_user = User.query.filter_by(username=form.username.data).first()
+        existing_user = Users.query.filter_by(username=form.username.data).first()
         if existing_user:
             flash('Username already exists. Please choose a different one.', 'danger')
             return redirect(url_for('main.register'))
         
         # Create a new user without hashing the password
-        new_user = User(username=form.username.data, password=form.password.data)
+        new_user = Users(username=form.username.data, password=form.password.data)
         
         # Add the user to the database
         db.session.add(new_user)
@@ -50,7 +50,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         #return user if in db already
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Users.query.filter_by(username=form.username.data).first()
         if user and user.password == form.password.data:
             login_user(user)
             flash('You are now logged in.')
@@ -73,7 +73,7 @@ def logout():
 def test_db():
     try:
         # Perform a simple query to check the connection
-        users = User.query.all()  # Fetch all users from the 'users' table
+        users = Users.query.all()  # Fetch all users from the 'users' table
         return f"Database connected! Found {len(users)} users."
     except Exception as e:
         return f"Database connection failed: {str(e)}"
@@ -84,25 +84,25 @@ def test_db():
 def my_recipes():
     if current_user.is_admin: 
         return redirect(url_for('main.view_recipes'))
-    recipes = Recipe.query.filter_by(user_id=current_user.user_id).all()
+    recipes = Recipes.query.filter_by(user_id=current_user.user_id).all()
     return render_template('my_recipes.html', recipes=recipes)
 
 @main.route('/view_recipes')
 @login_required
 def view_recipes():
-    recipes = Recipe.query.all()
+    recipes = Recipes.query.all()
     return render_template('view_recipes.html', recipes=recipes)
 
 @main.route('/view_recipes/<int:recipe_id>')
 def recipe_page(recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)
+    recipe = Recipes.query.get_or_404(recipe_id)
     return render_template('recipe.html', recipe=recipe)
 
 @main.route('/admin/users', methods = ['GET', 'POST'])
 @login_required
 @admin_required
 def manage_users():
-    users = User.query.all()
+    users = Users.query.all()
     if request.method == 'POST':
         username = request.form.get('username')
         deleted_user = User.query.filter_by(username=username)
@@ -118,7 +118,7 @@ def manage_users():
 @login_required
 def delete_recipe(recipe_id):
     try:
-        recipe = Recipe.query.get_or_404(recipe_id)
+        recipe = Recipes.query.get_or_404(recipe_id)
         if not current_user.is_admin and recipe.user_id != current_user.user_id:
             flash("You are not authorized to delete user {recipe.user_id}'s recipe." \
             "You may only delete your recipes.")
@@ -144,7 +144,7 @@ def create_recipe():
         instructions = request.form.get('instructions')
         servings = request.form.get('servings')
 
-        new_recipe = Recipe(
+        new_recipe = Recipes(
             title=title,
             calories=calories,
             region_category=region_category,
