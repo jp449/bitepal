@@ -82,6 +82,8 @@ def test_db():
 @main.route('/my_recipes')
 @login_required
 def my_recipes():
+    if current_user.is_admin: 
+        return redirect(url_for('main.view_recipes'))
     recipes = Recipe.query.filter_by(user_id=current_user.user_id).all()
     return render_template('my_recipes.html', recipes=recipes)
 
