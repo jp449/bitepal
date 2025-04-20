@@ -13,7 +13,7 @@
                 <p>Calories: {{ recipe.calories }}</p>
                 <p>Region: {{ recipe.region_category }}</p>
                 <p>Servings: {{ recipe.servings }}</p>
-                <p>Instructions: {{ recipe.instructions }}</p>
+                <p>Instructions: {{ recipe.instructions | replace('\n', '<br>') }}</p>
 
                 <h3>Reviews</h3>
                 {% if recipe.reviews %}
