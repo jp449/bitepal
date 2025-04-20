@@ -137,6 +137,9 @@ def delete_recipe(recipe_id):
 @main.route('/create_recipe', methods=['GET', 'POST'])
 @login_required
 def create_recipe():
+    if current_user.is_admin:
+        flash("Admins are not allowed to create recipes.", 'danger')
+        return redirect(url_for('main.home'))  
     if request.method == 'POST':
         title = request.form.get('title')
         calories = request.form.get('calories')
