@@ -117,6 +117,12 @@ def manage_users():
 def delete_recipe(recipe_id):
     try:
         recipe = Recipe.query.get_or_404(recipe_id)
+        if not current_user.is_admin and recipe.user_id != current_user.user_id:
+            flash("You are not authorized to delete user {recipe.user_id}'s recipe." \
+            "You may only delete your recipes.")
+            return redirect(url_for('main.my_recipes'))
+        
+        #delete recipe only if admin or is own recipe
         db.session.delete(recipe)
         db.session.commit()
         flash("Recipe deleted successfully!")
