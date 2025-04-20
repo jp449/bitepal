@@ -43,10 +43,10 @@ class Recipes(db.Model):
     __tablename__ = 'recipes'
     recipe_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    calories = db.Column(db.Integer)
-    region_category = db.Column(db.String(50))
-    instructions = db.Column(db.Text)
-    servings = db.Column(db.Integer)
+    calories = db.Column(db.Integer, nullable = False, default = 0)
+    region_category = db.Column(db.String(50), nullable = False, default = 'Unknown')
+    instructions = db.Column(db.Text, nullable = False)
+    servings = db.Column(db.Integer, nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
 
     reviews = db.relationship('Reviews', back_populates='recipe', lazy=True)
