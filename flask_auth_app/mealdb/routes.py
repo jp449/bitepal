@@ -55,6 +55,9 @@ def login():
             login_user(user)
             flash('You are now logged in.')
             return redirect(url_for('main.home'))
+        elif not user:
+            flash('User does not exist. Please register user.')
+            return redirect(url_for('main.register'))
         else:
             flash('Login info incorrect.')
     return render_template('login.html', form = form)
@@ -106,7 +109,7 @@ def manage_users():
             db.session.commit()
             flash(f"User {username} deleted.", 'success')
         else:
-            flash(f"User {username} no found", 'danger')
+            flash(f"User {username} not found", 'danger')
     return render_template('admin_users.html', users = users)
 
 @main.route('/delete_recipe/<int:recipe_id>')
