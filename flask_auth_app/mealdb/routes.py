@@ -153,35 +153,23 @@ def create_recipe():
         
         flash("Recipe created successfully!")
         return redirect(url_for('main.my_recipes'))
-    
-    if ingredient_form.validate_on_submit():
-        # Handle ingredient creation
+    return render_template('create_recipe.html', recipe_form = recipe_form, ingredient_form = ingredient_form)
+
+@main.route('/create_ingredient', methods=['GET', 'POST'])
+@login_required
+def create_ingredients():
+    form = IngredientsForm()
+    if current_user.is_admin:
+        flash("Admins are not allowed to create recipes.", 'danger')
+        return redirect(url_for('main.home'))
+    if form.validate_on_submit():
         new_ingredient = Ingredients(
-            name=ingredient_form.name.data,
-            ingredient_type=ingredient_form.ingredient_type.data
+            name = request.form.name.data,
+            ingredient_type = request.form.ingredient_type.data
         )
         db.session.add(new_ingredient)
         db.session.commit()
-        flash("Ingredient created successfully!", "success")
-        return redirect(url_for('main.create_recipe'))
-
-    return render_template('create_recipe.html', recipe_form=recipe_form, ingredient_form=ingredient_form)
-
-# @main.route('/create_ingredient', methods=['GET', 'POST'])
-# @login_required
-# def create_ingredients():
-#     form = IngredientsForm()
-#     if current_user.is_admin:
-#         flash("Admins are not allowed to create recipes.", 'danger')
-#         return redirect(url_for('main.home'))
-#     if form.validate_on_submit():
-#         new_ingredient = Ingredients(
-#             name = request.form.name.data,
-#             ingredient_type = request.form.ingredient_type.data
-#         )
-#         db.session.add(new_ingredient)
-#         db.session.commit()
         
-#         flash("Ingredient created successfully!")
-#         return redirect(url_for('main.my_recipes'))
-#     return render_template('create_ingredient.html', form = form)
+        flash("Ingredient created successfully!")
+        return redirect(url_for('main.my_recipes'))
+    return render_template('create_ingredient.html', form = form)

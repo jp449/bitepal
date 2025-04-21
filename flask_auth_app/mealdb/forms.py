@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField, FieldList, FormField
 from wtforms.validators import DataRequired, Length, EqualTo, Optional, NumberRange
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
@@ -50,4 +51,3 @@ class IngredientsForm(FlaskForm):
         ('cereal', 'Cereal'),
         ('snack', 'Snack')
     ])
-    submit = SubmitField('Add Ingredient')
