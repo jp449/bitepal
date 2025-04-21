@@ -155,4 +155,4 @@ def create_recipe():
         
         flash("Recipe created successfully!")
         return redirect(url_for('main.my_recipes'))
-    return render_template('create_recipe.html')
+    return render_template('create_recipe.html', form = form)
