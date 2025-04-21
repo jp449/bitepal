@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Preferences</title>
+    <script>
+        function toggleTypeDropdown() {
+            const newRestrictionInput = document.getElementById('new_restriction_name');
+            const typeLabel = document.getElementById('type_label');
+            const typeDropdown = document.getElementById('new_restriction_type');
+            
+            // Show the dropdown only if new restriction name is added
+            if (newRestrictionInput.value.trim() !== '') {
+                typeLabel.style.display = 'block'; // Show the label
+                typeDropdown.style.display = 'block'; // Show the dropdown
+            } else {
+                typeLabel.style.display = 'none'; // Hide the label
+                typeDropdown.style.display = 'none'; // Hide the dropdown
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>My Preferences and Allergies</h1>
@@ -35,8 +51,8 @@
         <br><br>
 
         <!-- Dropdown for new restriction type -->
-        <label for="new_restriction_type">Type (allergy/preference):</label>
-        <select name="new_restriction_type" id="new_restriction_type">
+        <label for="new_restriction_type" id = "type_label" style= "display: none;">Type (allergy/preference):</label>
+        <select name="new_restriction_type" id="new_restriction_type" style="display: none;">
             <option value="allergy">Allergy</option>
             <option value="preference">Preference</option>
         </select>

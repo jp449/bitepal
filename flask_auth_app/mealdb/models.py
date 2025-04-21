@@ -63,10 +63,10 @@ class DietaryRestrictions(db.Model):
     dietary_restriction_id = db.Column(db.Integer, primary_key = True)
     dietary_preference = db.Column(db.String, nullable = False)
     name = db.Column(db.Text, nullable = False)
-    __table_args__ = (CheckConstraint("dietary_preference IN ('allergy', 'preference')", name = 'dietary_preference_check'))
+    __table_args__ = (CheckConstraint("dietary_preference IN ('allergy', 'preference')", name = 'dietary_preference_check'),)
     
 class UserRestrictions(db.Model):
     __tablename__ = 'user_restrictions'
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete = 'CASCADE'), nullable = False)
-    restriction_id = db.Column(db.Integer. db.ForeignKey('dietary_restrictions.dietary_restriction_id'), nullable = False)
-    __table_args__ = (PrimaryKeyConstraint('user_id', 'restriction_id', name = 'user_restrictions_pkey'))
+    restriction_id = db.Column(db.Integer, db.ForeignKey('dietary_restrictions.dietary_restriction_id'), nullable = False)
+    __table_args__ = (PrimaryKeyConstraint('user_id', 'restriction_id', name = 'user_restrictions_pkey'),)
