@@ -172,3 +172,8 @@ def create_ingredients():
         flash("Ingredient created successfully!")
         return redirect(url_for('main.my_recipes'))
     return render_template('create_ingredient.html', form = form)
+
+@main.route('/my_preferences', methods = ['GET', 'POST'])
+@login_required
+def load_preferences():
+    

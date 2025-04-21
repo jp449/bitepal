@@ -58,5 +58,9 @@ class Ingredients(db.Model):
     ingredient_id = db.Column(db.Integer, primary_key = True)
     ingredient_type = db.Column(db.Text, nullable = False)
     
-
-
+class DietaryRestrictions(db.Model):
+    __table__name = 'dietary_restrictions'
+    dietary_restriction_id = db.Column(db.Integer, primary_key = True)
+    dietary_preference = db.Column(db.String, nullable = False, 
+                                   CheckConstraint("dietary_preference IN ('allergy', 'preference)", name = dietary_preference_check))
+    name = db.Column(db.Text, nullable = False)
