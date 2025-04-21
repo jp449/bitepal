@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, RecipeForm
 from .models import Recipes, Users
 from . import db
 
@@ -137,29 +137,22 @@ def delete_recipe(recipe_id):
 @main.route('/create_recipe', methods=['GET', 'POST'])
 @login_required
 def create_recipe():
+    form = RecipeForm()
     if current_user.is_admin:
         flash("Admins are not allowed to create recipes.", 'danger')
-        return redirect(url_for('main.home'))  
-    if request.method == 'POST':
-        title = request.form.get('title')
-        calories = request.form.get('calories')
-        region_category = request.form.get('region_category')
-        instructions = request.form.get('instructions')
-        servings = request.form.get('servings')
-
+        return redirect(url_for('main.home'))
+    if form.validate_on_submit():
         new_recipe = Recipes(
-            title=title,
-            calories=calories,
-            region_category=region_category,
-            instructions=instructions,
-            servings=servings,
-            user_id=current_user.user_id
-        )
-        
+            title = request.form.title.data,
+            calories = request.form.calories.data,
+            region_category = request.form.region_category.data,
+            instructions = request.form.instructions.data,
+            servings = request.form.servings.data,
+            user_id = current_user.user_id.data
+        )  
         db.session.add(new_recipe)
         db.session.commit()
         
         flash("Recipe created successfully!")
         return redirect(url_for('main.my_recipes'))
-    
     return render_template('create_recipe.html')
