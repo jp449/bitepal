@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Preferences</title>
+</head>
+<body>
+    <h1>My Preferences and Allergies</h1>
+
+    <!-- Display current preferences/allergies -->
+    <h2>Current Preferences and Allergies</h2>
+    <ul>
+        {% for user_restriction, restriction in user_preferences %}
+            <li>{{ restriction.name }} ({{ restriction.dietary_preference }})</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Form to add new preferences/allergies -->
+    <h2>Add a New Preference or Allergy</h2>
+    <form method="POST">
+        <!-- Dropdown for existing restrictions -->
+        <label for="restriction_id">Select an Existing Restriction:</label>
+        <select name="restriction_id" id="restriction_id">
+            <option value="">-- Select --</option>
+            {% for restriction in all_restrictions %}
+                <option value="{{ restriction.dietary_restriction_id }}">{{ restriction.name }} ({{ restriction.dietary_preference }})</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <!-- Input for new restriction -->
+        <label for="new_restriction_name">Or Add a New Restriction:</label>
+        <input type="text" name="new_restriction_name" id="new_restriction_name" placeholder="Enter restriction name">
+        <br><br>
+
+        <!-- Dropdown for new restriction type -->
+        <label for="new_restriction_type">Type (allergy/preference):</label>
+        <select name="new_restriction_type" id="new_restriction_type">
+            <option value="allergy">Allergy</option>
+            <option value="preference">Preference</option>
+        </select>
+        <br><br>
+
+        <!-- Submit button -->
+        <button type="submit">Add</button>
+    </form>
+</body>
+</html>
