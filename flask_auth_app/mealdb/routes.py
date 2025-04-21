@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
-from .forms import RegistrationForm, LoginForm, RecipeForm
-from .models import Recipes, Users
+from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm
+from .models import Recipes, Users, Ingredients
 from . import db
 
 from flask_login import login_user,  login_required, current_user, logout_user
@@ -138,9 +138,6 @@ def delete_recipe(recipe_id):
 @login_required
 def create_recipe():
     form = RecipeForm()
-    if current_user.is_admin:
-        flash("Admins are not allowed to create recipes.", 'danger')
-        return redirect(url_for('main.home'))
     if form.validate_on_submit():
         new_recipe = Recipes(
             title = request.form.title.data,
@@ -156,3 +153,22 @@ def create_recipe():
         flash("Recipe created successfully!")
         return redirect(url_for('main.my_recipes'))
     return render_template('create_recipe.html', form = form)
+
+@main.route('/create_ingredient', methods=['GET', 'POST'])
+@login_required
+def create_ingredients():
+    form = IngredientsForm()
+    if current_user.is_admin:
+        flash("Admins are not allowed to create recipes.", 'danger')
+        return redirect(url_for('main.home'))
+    if form.validate_on_submit():
+        new_ingredient = Ingredients(
+            name = request.form.name.data,
+            ingredient_type = request.form.ingredient_type.data
+        )
+        db.session.add(new_ingredient)
+        db.session.commit()
+        
+        flash("Ingredient created successfully!")
+        return redirect(url_for('main.my_recipes'))
+    return render_template('create_ingredient.html', form = form)

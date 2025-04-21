@@ -51,5 +51,12 @@ class Recipes(db.Model):
 
     reviews = db.relationship('Reviews', back_populates='recipe', lazy=True)
     author = db.relationship('Users', backref='recipes')
+    
+class Ingredients(db.Model):
+    __tablename__='ingredients'
+    name = db.Column(db.Text, nullable = False)
+    ingredient_id = db.Column(db.Integer, primary_key = True)
+    ingredient_type = db.Column(db.Text, nullable = False)
+    
 
 
