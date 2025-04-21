@@ -3,8 +3,31 @@
 <head>
     <title>Create Recipe</title>
 </head>
-
 <body>
-    <h1> Create a New Recipe</h1>
+    <h1>Create a New Recipe</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title(size=40) }}
+        </p>
+        <p>
+            {{ form.calories.label }}<br>
+            {{ form.calories() }}
+        </p>
+        <p>
+            {{ form.region_category.label }}<br>
+            {{ form.region_category() }}
+        </p>
+        <p>
+            {{ form.instructions.label }}<br>
+            {{ form.instructions(rows=5, cols=40) }}
+        </p>
+        <p>
+            {{ form.servings.label }}<br>
+            {{ form.servings() }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
 </body>
-
+</html>
