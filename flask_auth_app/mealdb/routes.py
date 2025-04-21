@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm
-from .models import Recipes, Users, Ingredients
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions
 from . import db
 
 from flask_login import login_user,  login_required, current_user, logout_user
@@ -176,4 +176,51 @@ def create_ingredients():
 @main.route('/my_preferences', methods = ['GET', 'POST'])
 @login_required
 def load_preferences():
+    user_preferences = db.session.query(UserRestrictions, DietaryRestrictions).join(
+        DietaryRestrictions, UserRestrictions.restriction_id == DietaryRestrictions.dietary_restriction_id
+    ).filter(UserRestrictions.user_id== current_user.user_id).all()
+    
+    all_restrictions = DietaryRestrictions.query.all()
+
+    if request.method == 'POST':
+        restriction_id = request.form.get('restriction_id')
+        new_restriction_name = request.form.get('new_restriction_name')
+        new_restriction_type = request.form.get('new_restriction_type')
+        if new_restriction_name:  # If the user entered a new restriction
+            # Check if the restriction already exists
+            existing_restriction = DietaryRestrictions.query.filter_by(name=new_restriction_name).first()
+            if not existing_restriction:
+                # Add the new restriction to the DietaryRestrictions table
+                new_restriction = DietaryRestrictions(
+                    name=new_restriction_name,
+                    dietary_preference=new_restriction_type
+                )
+                db.session.add(new_restriction)
+                db.session.flush()  # Flush to get the new restriction_id
+                restriction_id = new_restriction.dietary_restriction_id
+            else:
+                restriction_id = existing_restriction.dietary_restriction_id
+
+         # Add the restriction to the UserRestrictions table
+        if restriction_id:
+            existing_user_restriction = UserRestrictions.query.filter_by(
+                user_id=current_user.user_id, restriction_id=restriction_id
+            ).first()
+            if not existing_user_restriction:
+                new_user_restriction = UserRestrictions(
+                    user_id=current_user.user_id,
+                    restriction_id=restriction_id
+                )
+                db.session.add(new_user_restriction)
+                db.session.commit()
+                flash("Preference/Allergy added successfully!", 'success')
+            else:
+                flash("This preference/allergy is already added.", 'info')
+        return redirect(url_for('main.load_preferences'))
+    
+    return render_template(
+        'my_preferences.html',
+        user_preferences=user_preferences,
+        all_restrictions=all_restrictions
+    )
     

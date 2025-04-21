@@ -68,5 +68,5 @@ class DietaryRestrictions(db.Model):
 class UserRestrictions(db.Model):
     __tablename__ = 'user_restrictions'
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete = 'CASCADE'), nullable = False)
-    restriction_id = db.Column(db.Integer. db.ForeignKey('dietary_restrictions.dietary_restriction_id', ondelete = 'CASCADE'), nullable = False)
+    restriction_id = db.Column(db.Integer. db.ForeignKey('dietary_restrictions.dietary_restriction_id'), nullable = False)
     __table_args__ = (PrimaryKeyConstraint('user_id', 'restriction_id', name = 'user_restrictions_pkey'))
