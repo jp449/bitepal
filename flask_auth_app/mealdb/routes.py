@@ -105,7 +105,7 @@ def manage_users():
     users = Users.query.all()
     if request.method == 'POST':
         username = request.form.get('username')
-        deleted_user = User.query.filter_by(username=username)
+        deleted_user = Users.query.filter_by(username=username)
         if deleted_user:
             db.session.delete(deleted_user)
             db.session.commit()
