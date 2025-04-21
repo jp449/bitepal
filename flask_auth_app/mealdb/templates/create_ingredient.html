@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Create Ingredient</title>
 </head>
 <body>
+    <h1>Create a New Ingredient</h1>
     <form method="POST">
-        {{form.hidden_tag()}}
+        {{ form.hidden_tag() }}
         <p>
-            {{ form.ingredient_name.label }}<br>
-            {{ form.ingredient_name(size=40) }}
+            {{ form.name.label }}<br>
+            {{ form.name(size=40) }}
         </p>
         <p>
-            {{form.ingredient_type.label}}<br>
-            {{form.ingredient_type(size=40)}}
+            {{ form.ingredient_type.label }}<br>
+            {{ form.ingredient_type() }}
         </p>
+        <p>{{ form.submit() }}</p>
     </form>
 </body>
 </html>
