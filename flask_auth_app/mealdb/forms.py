@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField
-from wtforms.validators import DataRequired, Length, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField, FieldList, FormField
+from wtforms.validators import DataRequired, Length, EqualTo, Optional, NumberRange
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
@@ -22,4 +23,38 @@ class ReviewForm(FlaskForm):
     
 # class LogoutForm(FlaskForm):
 #     submit = SubmitField('Logout')
+
+class RecipeForm(FlaskForm):
+    title = StringField('Title', validators = [DataRequired()])
+    calories = IntegerField('Calories', validators=[Optional(), NumberRange(min=0)], default=0)
+    region_category = StringField('Region of Origin', validators = [Optional()], default = 'Unknown')
+    instructions = TextAreaField('Instructions', validators = [DataRequired()])
+    servings = IntegerField('Servings', validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField('Create Recipe')
     
+class IngredientsForm(FlaskForm):
+    name = StringField('Ingredient Name', validators=[DataRequired()])
+    ingredient_type = SelectField('Ingredient Type', choices = [
+        ('vegetable', 'Vegetable'),
+        ('fruit', 'Fruit'),
+        ('grain', 'Grain'),
+        ('protein', 'Protein'),
+        ('dairy', 'Dairy'),
+        ('spice', 'Spice'),
+        ('herb', 'Herb'),
+        ('oil', 'Oil'),
+        ('sauce', 'Sauce'),
+        ('condiment', 'Condiment'),
+        ('sugar', 'Sugar'),
+        ('sweetener', 'Sweetener'),
+        ('nut', 'Nut'),
+        ('seed', 'Seed'),
+        ('legume', 'Legume'),
+        ('seafood', 'Seafood'),
+        ('meat', 'Meat'),
+        ('poultry', 'Poultry'),
+        ('egg', 'Egg'),
+        ('dried fruit', 'Dried Fruit'),
+        ('cereal', 'Cereal'),
+        ('snack', 'Snack')
+    ])

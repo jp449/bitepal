@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Create Recipe</title>
+</head>
+<body>
+    <h1>Create a New Recipe</h1>
+    <form method="POST">
+        {{ recipe_form.hidden_tag() }}
+        <p>
+            {{ recipe_form.title.label }}<br>
+            {{ recipe_form.title(size=40) }}
+        </p>
+        <p>
+            {{ recipe_form.calories.label }}<br>
+            {{ recipe_form.calories() }}
+        </p>
+        <p>
+            {{ recipe_form.region_category.label }}<br>
+            {{ recipe_form.region_category() }}
+        </p>
+
+        <p>
+            {{ recipe_form.instructions.label }}<br>
+            {{ recipe_form.instructions(rows=5, cols=40) }}
+        </p>
+        <p>
+            {{ recipe_form.servings.label }}<br>
+            {{ recipe_form.servings() }}
+        </p>
+        <p>
+            <p> Add Ingredients:</p>
+            {{ ingredient_form.name.label }}
+            {{ ingredient_form.name(size=40) }}
+       
+            {{ ingredient_form.ingredient_type.label }}
+            {{ ingredient_form.ingredient_type() }}
+        </p>
+        <p>{{ recipe_form.submit() }}</p>
+    </form>
+</body>
+</html>

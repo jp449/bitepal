@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 
-class User(db.Model, UserMixin):
+class Users(db.Model, UserMixin):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)  # Matches the schema
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -35,21 +35,40 @@ class Reviews(db.Model):
     user_id: Mapped[int] = mapped_column(Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable = False)
     recipe_id: Mapped[int] = mapped_column(Integer)
 
-    recipe: Mapped['Recipes'] = relationship('Recipe', back_populates='reviews')
-    user: Mapped['Users'] = relationship('User', back_populates='reviews')
+    recipe: Mapped['Recipes'] = relationship('Recipes', back_populates='reviews')
+    user: Mapped['Users'] = relationship('Users', back_populates='reviews')
 
 
-class Recipe(db.Model):
+class Recipes(db.Model):
     __tablename__ = 'recipes'
     recipe_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    calories = db.Column(db.Integer)
-    region_category = db.Column(db.String(50))
-    instructions = db.Column(db.Text)
-    servings = db.Column(db.Integer)
+    calories = db.Column(db.Integer, nullable = False, default = 0)
+    region_category = db.Column(db.String(50), nullable = False, default = 'Unknown')
+    instructions = db.Column(db.Text, nullable = False)
+    servings = db.Column(db.Integer, nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
 
     reviews = db.relationship('Reviews', back_populates='recipe', lazy=True)
-    author = db.relationship('User', backref='recipes')
-
-
+    author = db.relationship('Users', backref='recipes')
+    
+class Ingredients(db.Model):
+    __tablename__='ingredients'
+    name = db.Column(db.Text, nullable = False)
+    ingredient_id = db.Column(db.Integer, primary_key = True)
+    ingredient_type = db.Column(db.Text, nullable = False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable = False)
+    recipe = db.relationship('Recipes', backref='ingredients')
+    
+class DietaryRestrictions(db.Model):
+    __tablename__ = 'dietary_restrictions'
+    dietary_restriction_id = db.Column(db.Integer, primary_key = True)
+    dietary_preference = db.Column(db.String, nullable = False)
+    name = db.Column(db.Text, nullable = False)
+    __table_args__ = (CheckConstraint("dietary_preference IN ('allergy', 'preference')", name = 'dietary_preference_check'),)
+    
+class UserRestrictions(db.Model):
+    __tablename__ = 'user_restrictions'
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete = 'CASCADE'), nullable = False)
+    restriction_id = db.Column(db.Integer, db.ForeignKey('dietary_restrictions.dietary_restriction_id'), nullable = False)
+    __table_args__ = (PrimaryKeyConstraint('user_id', 'restriction_id', name = 'user_restrictions_pkey'),)
