@@ -13,6 +13,13 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class ReviewForm(FlaskForm):
+    score = SelectField('Score (1–5)',
+                        choices=[(str(i), i) for i in range(1, 6)],
+                        validators=[DataRequired()])
+    review_text = TextAreaField('Your Review', validators=[DataRequired()])
+    submit = SubmitField('Submit Review')
     
 # class LogoutForm(FlaskForm):
 #     submit = SubmitField('Logout')

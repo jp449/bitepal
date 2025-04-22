@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
-from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions
+from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews
 from . import db
 
 from flask_login import login_user,  login_required, current_user, logout_user
@@ -93,10 +93,22 @@ def view_recipes():
     recipes = Recipes.query.all()
     return render_template('view_recipes.html', recipes=recipes)
 
-@main.route('/view_recipes/<int:recipe_id>')
+@main.route('/view_recipes/<int:recipe_id>',methods = ['GET','POST'])
 def recipe_page(recipe_id):
-    recipe = Recipes.query.get_or_404(recipe_id)
-    return render_template('recipe.html', recipe=recipe)
+    recipe = Recipe.query.get_or_404(recipe_id)
+    form = ReviewForm()
+    if form.validate_on_submit():
+        new_review = Reviews(
+            score=int(form.score.data),
+            review_text=form.review_text.data,
+            user_id=current_user.user_id,
+            recipe_id=recipe.recipe_id
+        )
+        db.session.add(new_review)
+        db.session.commit()
+        flash('Review submitted successfully!', 'success')
+        return redirect(url_for('main.recipe_page', recipe_id=recipe_id))
+    return render_template('recipe.html', recipe=recipe,form=form)
 
 @main.route('/admin/users', methods = ['GET', 'POST'])
 @login_required
