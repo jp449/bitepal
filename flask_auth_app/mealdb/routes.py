@@ -95,7 +95,7 @@ def view_recipes():
 
 @main.route('/view_recipes/<int:recipe_id>',methods = ['GET','POST'])
 def recipe_page(recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)
+    recipe = Recipes.query.get_or_404(recipe_id)
     form = ReviewForm()
     if form.validate_on_submit():
         new_review = Reviews(

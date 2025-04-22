@@ -57,8 +57,19 @@ class Ingredients(db.Model):
     name = db.Column(db.Text, nullable = False)
     ingredient_id = db.Column(db.Integer, primary_key = True)
     ingredient_type = db.Column(db.Text, nullable = False)
-    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable = False)
-    recipe = db.relationship('Recipes', backref='ingredients')
+    # recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable = False)
+    # recipe = db.relationship('Recipes', backref='ingredients')
+    
+class RecipeIngredients(db.Model):
+    __tablename__ = 'recipe_ingredients'
+    ingredient_id = db.Column(db.Integer, primary_key = True)
+    recipe_id = db.Column(db.Integer, primary_key = True)
+    amount = db.Column(db.Numeric, nullable = False)
+    unit = db.Column(db.Text, nullable = False)
+    
+    __table_args__=(
+        PrimaryKeyConstraint('ingredient_id', 'recipe_id', name='recipe_ingredients_pkey'),
+    )
     
 class DietaryRestrictions(db.Model):
     __tablename__ = 'dietary_restrictions'
@@ -71,4 +82,4 @@ class UserRestrictions(db.Model):
     __tablename__ = 'user_restrictions'
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete = 'CASCADE'), nullable = False)
     restriction_id = db.Column(db.Integer, db.ForeignKey('dietary_restrictions.dietary_restriction_id'), nullable = False)
-    __table_args__ = (PrimaryKeyConstraint('user_id', 'restriction_id', name = 'user_restrictions_pkey'),)
+    __table_args__ = (PrimaryKeyConstraint('user_id', 'restriction_id', name = 'user_restrictions_pkey'))
