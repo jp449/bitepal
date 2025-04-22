@@ -57,6 +57,8 @@ class Ingredients(db.Model):
     name = db.Column(db.Text, nullable = False)
     ingredient_id = db.Column(db.Integer, primary_key = True)
     ingredient_type = db.Column(db.Text, nullable = False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable = False)
+    recipe = db.relationship('Recipes', backref='ingredients')
     
 class DietaryRestrictions(db.Model):
     __tablename__ = 'dietary_restrictions'

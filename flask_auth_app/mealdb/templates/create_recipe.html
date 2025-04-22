@@ -6,30 +6,37 @@
 <body>
     <h1>Create a New Recipe</h1>
     <form method="POST">
-        {{ form.hidden_tag() }}
+        {{ recipe_form.hidden_tag() }}
         <p>
-            {{ form.title.label }}<br>
-            {{ form.title(size=40) }}
+            {{ recipe_form.title.label }}<br>
+            {{ recipe_form.title(size=40) }}
         </p>
         <p>
-            {{ form.calories.label }}<br>
-            {{ form.calories() }}
+            {{ recipe_form.calories.label }}<br>
+            {{ recipe_form.calories() }}
         </p>
         <p>
-            {{ form.region_category.label }}<br>
-            {{ form.region_category() }}
+            {{ recipe_form.region_category.label }}<br>
+            {{ recipe_form.region_category() }}
         </p>
-        <p>{{form.ingredient_name.label}}<br>
-            {{form.ingredient_type}}</p>
+
         <p>
-            {{ form.instructions.label }}<br>
-            {{ form.instructions(rows=5, cols=40) }}
+            {{ recipe_form.instructions.label }}<br>
+            {{ recipe_form.instructions(rows=5, cols=40) }}
         </p>
         <p>
-            {{ form.servings.label }}<br>
-            {{ form.servings() }}
+            {{ recipe_form.servings.label }}<br>
+            {{ recipe_form.servings() }}
         </p>
-        <p>{{ form.submit() }}</p>
+        <p>
+            <p> Add Ingredients:</p>
+            {{ ingredient_form.name.label }}
+            {{ ingredient_form.name(size=40) }}
+       
+            {{ ingredient_form.ingredient_type.label }}
+            {{ ingredient_form.ingredient_type() }}
+        </p>
+        <p>{{ recipe_form.submit() }}</p>
     </form>
 </body>
 </html>
