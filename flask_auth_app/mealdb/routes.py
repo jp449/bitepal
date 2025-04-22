@@ -192,11 +192,11 @@ def load_preferences():
             if not existing_restriction:
                 # Add the new restriction to the DietaryRestrictions table
                 new_restriction = DietaryRestrictions(
-                    name=new_restriction_name,
-                    dietary_preference=new_restriction_type
+                    dietary_preference=new_restriction_type,
+                    name=new_restriction_name
                 )
                 db.session.add(new_restriction)
-                db.session.flush()  # Flush to get the new restriction_id
+                db.session.flush()  # get id of newly created object: https://stackoverflow.com/questions/4201455/sqlalchemy-whats-the-difference-between-flush-and-commit
                 restriction_id = new_restriction.dietary_restriction_id
             else:
                 restriction_id = existing_restriction.dietary_restriction_id
