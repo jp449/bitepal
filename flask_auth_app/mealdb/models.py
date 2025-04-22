@@ -59,7 +59,7 @@ class Ingredients(db.Model):
     __tablename__='ingredients'
     name = db.Column(db.Text, nullable = False)
     ingredient_id = db.Column(db.Integer, primary_key = True)
-    ingredient_type = db.Column(db.Text, nullable = False)
+    type = db.Column(db.Text, nullable = False)
     
     recipe: Mapped['Recipes'] = relationship('Recipes', secondary='recipe_ingredients', backref='ingredients')
     # recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable = False)
@@ -67,13 +67,13 @@ class Ingredients(db.Model):
     
 class RecipeIngredients(db.Model):
     __tablename__ = 'recipe_ingredients'
-    recipe_id = db.Column(db.Integer, primary_key = True)
-    ingredient_id = db.Column(db.Integer, primary_key = True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete = 'CASCADE'), nullable = False)
+    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id', ondelete = 'CASCADE'), nullable = False)
     amount = db.Column(db.Numeric, nullable = False)
     unit = db.Column(db.Text, nullable = False)
     
     __table_args__=(
-        PrimaryKeyConstraint('recipe_id', 'ingredient_id'), 
+        PrimaryKeyConstraint('recipe_id', 'ingredient_id', name = 'recipe_ingredients_pkey'),
     )
     
     
