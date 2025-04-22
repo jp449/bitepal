@@ -128,7 +128,6 @@ def delete_recipe(recipe_id):
         db.session.delete(recipe)
         db.session.commit()
         flash("Recipe deleted successfully!")
-        return jsonify({'success': True, 'message': 'Recipe deleted successfully.'})
     except Exception as e:
         flash("not working")
         print("Error deleting recipe:", str(e))
@@ -137,23 +136,21 @@ def delete_recipe(recipe_id):
 @main.route('/create_recipe', methods=['GET', 'POST'])
 @login_required
 def create_recipe():
-    recipe_form = RecipeForm()
-    ingredient_form = IngredientsForm()
-    if recipe_form.validate_on_submit():
+    form = RecipeForm()
+    if form.validate_on_submit():
         new_recipe = Recipes(
-            title = request.recipe_form.title.data,
-            calories = request.recipe_form.calories.data,
-            region_category = request.recipe_form.region_category.data,
-            instructions = request.recipe_form.instructions.data,
-            servings = request.recipe_form.servings.data,
-            user_id = current_user.user_id.data
+            title = request.form.title.data,
+            calories = request.form.calories.data,
+            region_category = request.form.region_category.data,
+            instructions = request.form.instructions.data,
+            servings = request.form.servings.data,
+            user_id = request.current_user.user_id,
         )  
         db.session.add(new_recipe)
         db.session.commit()
-        
         flash("Recipe created successfully!")
         return redirect(url_for('main.my_recipes'))
-    return render_template('create_recipe.html', recipe_form = recipe_form, ingredient_form = ingredient_form)
+    return render_template('create_recipe.html', form = form)
 
 @main.route('/create_ingredient', methods=['GET', 'POST'])
 @login_required
@@ -170,6 +167,5 @@ def create_ingredients():
         db.session.add(new_ingredient)
         db.session.commit()
         
-        flash("Ingredient created successfully!")
         return redirect(url_for('main.my_recipes'))
     return render_template('create_ingredient.html', form = form)

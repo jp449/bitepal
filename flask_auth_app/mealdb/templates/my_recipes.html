@@ -13,8 +13,19 @@
                 <p>Calories: {{ recipe.calories }}</p>
                 <p>Region: {{ recipe.region_category }}</p>
                 <p>Servings: {{ recipe.servings }}</p>
+                <h3>Ingredients</h3>
+                {% if recipe.ingredients %}
+                    {% for ingredient_association in recipe.ingredients %}
+                    <li> 
+                        {{ingredient_association.ingredient.name}}:
+                        {{ingredient_association.amount}} {{ingredient_association.unit}}
+                    </li>
+                {% endfor %}
+                {% else %}
+                    <p>No ingredients listed.</p>
+                {% endif %}
+                <h3>Instructions</h3>
                 <p>Instructions: {{ recipe.instructions | replace('\n', '<br>') }}</p>
-
                 <h3>Reviews</h3>
                 {% if recipe.reviews %}
                     <ul>

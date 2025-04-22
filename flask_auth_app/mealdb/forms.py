@@ -26,28 +26,6 @@ class RecipeForm(FlaskForm):
     submit = SubmitField('Create Recipe')
     
 class IngredientsForm(FlaskForm):
-    name = StringField('Ingredient Name', validators=[DataRequired()])
-    ingredient_type = SelectField('Ingredient Type', choices = [
-        ('vegetable', 'Vegetable'),
-        ('fruit', 'Fruit'),
-        ('grain', 'Grain'),
-        ('protein', 'Protein'),
-        ('dairy', 'Dairy'),
-        ('spice', 'Spice'),
-        ('herb', 'Herb'),
-        ('oil', 'Oil'),
-        ('sauce', 'Sauce'),
-        ('condiment', 'Condiment'),
-        ('sugar', 'Sugar'),
-        ('sweetener', 'Sweetener'),
-        ('nut', 'Nut'),
-        ('seed', 'Seed'),
-        ('legume', 'Legume'),
-        ('seafood', 'Seafood'),
-        ('meat', 'Meat'),
-        ('poultry', 'Poultry'),
-        ('egg', 'Egg'),
-        ('dried fruit', 'Dried Fruit'),
-        ('cereal', 'Cereal'),
-        ('snack', 'Snack')
-    ])
+    ingredient_id = IntegerField('Ingredient ID', validators=[DataRequired()])
+    amount = StringField('Amount', validators=[DataRequired()])
+    unit = StringField('Unit', validators=[DataRequired()])
