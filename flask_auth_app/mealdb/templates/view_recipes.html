@@ -42,7 +42,7 @@
                     {{ recipe.title }}
                 </a>
                 <span class="author">by {{ recipe.author.username }}</span>
-                Average Rating: {{ average_ratings[recipe.recipe_id] | round(2) if average_ratings.get(recipe.recipe_id) is not none else 'Not rated yet'}}/5
+               <strong> Average Rating: {{ average_ratings[recipe.recipe_id] | round(2) if average_ratings.get(recipe.recipe_id) is not none else 'Not rated yet'}}/5</strong>
             </li>
         {% endfor %}
     </ul>

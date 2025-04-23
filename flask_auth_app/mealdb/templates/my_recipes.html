@@ -67,7 +67,7 @@
         {% for recipe in recipes %}
             <li>
                 <h2>{{ recipe.title }}</h2>
-                <p>Average Rating: {{ average_ratings[recipe.recipe_id] | round(2) if average_ratings.get(recipe.recipe_id) is not none else 'Not rated yet'}}/5</p>
+                <p><strong>Average Rating: {{ average_ratings[recipe.recipe_id] | round(2) if average_ratings.get(recipe.recipe_id) is not none else 'Not rated yet'}}/5</strong></p>
                 <p><strong>Calories:</strong> {{ recipe.calories }}</p>
                 <p><strong>Region:</strong> {{ recipe.region_category }}</p>
                 <p><strong>Servings:</strong> {{ recipe.servings }}</p>
