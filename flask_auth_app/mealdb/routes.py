@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, AvgRecipeRating, RecipeIngredients
+
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, AvgRecipeRating, RecipeIngredients, SavedRecipeList
+
 from . import db
 
 from sqlalchemy.sql.expression import any_
@@ -338,4 +340,26 @@ def load_preferences():
         all_restrictions=all_restrictions, 
         filtered_recipes=filtered_recipes
     )
+@main.route('/save_recipe/<int:recipe_id>', methods=['POST'])
+@login_required
+def save_recipe(recipe_id):
+    saved = SavedRecipeList(user_id=current_user.user_id, recipe_id=recipe_id)
+    try:
+        db.session.add(saved)
+        db.session.commit()
+    except:
+        db.session.rollback()  # silently skip if already saved
+    return redirect(url_for('main.view_recipes'))
+
+
+@main.route('/saved_recipes')
+@login_required
+def saved_recipes():
+    saved = SavedRecipeList.query.filter_by(user_id=current_user.user_id).all()
+    recipe_ids = [s.recipe_id for s in saved]
+    recipes = Recipes.query.filter(Recipes.recipe_id.in_(recipe_ids)).all()
+    return render_template('saved_recipes.html', recipes=recipes)
+
+
+
     

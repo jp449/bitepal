@@ -52,9 +52,9 @@
             color: white;
         }
     </style>
-<head>
+<<head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>{{ recipe.title }}</title>
 </head>
 <body>
 <h1>{{ recipe.title }} - by {{ recipe.author.username }}</h1>
@@ -62,22 +62,30 @@
 <p>Calories: {{ recipe.calories }}</p>
 <p>Region: {{ recipe.region_category }}</p>
 <p>Servings: {{ recipe.servings }}</p>
-<h2>Ingredients: 
-</h2>
-    {% if recipe.ingredients%}
-        <ul>
-            {% for ingredient in recipe.ingredients %}
-                <li>
-                    <p>{{ ingredient.name}} | {{ingredient.type}}</p>
 
-                </li> 
-            {%endfor%}
-        </ul>
-    {% else %}
-        <p> No ingredients available. </p>
-    {% endif %}
+{% if current_user.is_authenticated %}
+<form action="{{ url_for('main.save_recipe', recipe_id=recipe.recipe_id) }}" method="POST">
+    <button type="submit">Save Recipe</button>
+    </form>
+{% else %}
+    <p><a href="{{ url_for('auth.login') }}">Log in</a> to save this recipe.</p>
+{% endif %}
 
-<h2>Instructions:</h2> <p>{{ recipe.instructions | replace('\n', '<br>') }}</p>
+<h2>Ingredients:</h2>
+{% if recipe.ingredients %}
+    <ul>
+        {% for ingredient in recipe.ingredients %}
+            <li>
+                <p>{{ ingredient.name }} | {{ ingredient.type }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No ingredients available.</p>
+{% endif %}
+
+<h2>Instructions:</h2>
+<p>{{ recipe.instructions | replace('\n', '<br>') }}</p>
 
 <h2>Reviews</h2>
 {% if recipe.reviews %}
@@ -97,23 +105,19 @@
 {% if current_user.is_authenticated %}
 <form method="POST">
     {{ form.hidden_tag() }}
-
     <p>
         {{ form.score.label }}<br>
         {{ form.score() }}
     </p>
-
     <p>
         {{ form.review_text.label }}<br>
         {{ form.review_text(rows=4, cols=50) }}
     </p>
-
     <p><button>{{ form.submit() }}</button></p>
 </form>
+
 {% else %}
     <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a review.</p>
 {% endif %}
-
-</ul>
 </body>
 </html>

@@ -35,6 +35,20 @@
 </head>
 <body>
     <h1>All Recipes</h1>
+    {% if current_user.is_authenticated %}
+    <form action="{{ url_for('main.saved_recipes') }}" method="GET" style="margin-bottom: 30px;">
+        <button type="submit" style="
+            background-color: #4adcba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        ">View Saved Recipes</button>
+    </form>
+{% endif %}
+
     <ul>
         {% for recipe in recipes %}
             <li>
