@@ -2,22 +2,80 @@
 <html lang="en">
 <head>
     <title>My Recipes</title>
+    <style>
+        body {
+            background-color: #ededf1;
+            text-align: center;
+        }
+        h1 {
+            font-size: 40px;
+        }
+        ul {
+            list-style: none;
+            max-width: 640px;
+            margin: auto;
+        }
+        li {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: left;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+        h2 {
+            margin: 0 0 10px;
+            color: #4adcba;
+        }
+        h3, h4 {
+            margin: 15px 0 5px;
+        }
+
+        .review-list {
+            padding-left: 20px;
+        }
+
+        a {
+            color: #4adcba;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .delete-link {
+            color: #c23e30;
+        }
+        button {
+            background-color: #4adcba;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #35d53d;
+        }
+        button a {
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <h1>Your Recipes</h1>
+
     {% if recipes %}
         <ul>
         {% for recipe in recipes %}
             <li>
                 <h2>{{ recipe.title }}</h2>
-                <p>Calories: {{ recipe.calories }}</p>
-                <p>Region: {{ recipe.region_category }}</p>
-                <p>Servings: {{ recipe.servings }}</p>
-                <p>Instructions: {{ recipe.instructions | replace('\n', '<br>') }}</p>
+                <p><strong>Average Rating: {{ average_ratings[recipe.recipe_id] | round(2) if average_ratings.get(recipe.recipe_id) is not none else 'Not rated yet'}}/5</strong></p>
+                <p><strong>Calories:</strong> {{ recipe.calories }}</p>
+                <p><strong>Region:</strong> {{ recipe.region_category }}</p>
+                <p><strong>Servings:</strong> {{ recipe.servings }}</p>
+                <p><strong>Instructions:</strong><br> {{ recipe.instructions | replace('\n', '<br>') }}</p>
 
                 <h3>Reviews</h3>
                 {% if recipe.reviews %}
-                    <ul>
+                    <ul class="review-list">
                     {% for review in recipe.reviews %}
                         <li>
                             <h4>User: {{ review.user.username }} | Rating: {{ review.score }}/5</h4>
@@ -26,16 +84,17 @@
                     {% endfor %}
                     </ul>
                 {% else %}
-                    <p>No reviews yet.</p>
+                    <p class="no-reviews">No reviews yet.</p>
                 {% endif %}
-                <a href="{{ url_for('main.delete_recipe', recipe_id=recipe.recipe_id) }}">Delete</a>
+
+                <a href="{{ url_for('main.delete_recipe', recipe_id=recipe.recipe_id) }}" class="delete-link">Delete</a>
             </li>
         {% endfor %}
         </ul>
     {% else %}
         <p>You haven’t created any recipes yet.</p>
     {% endif %}
-    <button><a href="{{ url_for('main.create_recipe')}}">Add New Recipe</a></button>
-    
+
+    <button><a href="{{ url_for('main.create_recipe') }}">Add New Recipe</a></button>
 </body>
 </html>

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, AvgRecipeRating
 from . import db
 
 from flask_login import login_user,  login_required, current_user, logout_user
@@ -85,13 +85,15 @@ def my_recipes():
     if current_user.is_admin: 
         return redirect(url_for('main.view_recipes'))
     recipes = Recipes.query.filter_by(user_id=current_user.user_id).all()
-    return render_template('my_recipes.html', recipes=recipes)
+    average_ratings = {r.recipe_id: r.average_score for r in AvgRecipeRating.query.all()}
+    return render_template('my_recipes.html', recipes=recipes,average_ratings=average_ratings)
 
 @main.route('/view_recipes')
 @login_required
 def view_recipes():
     recipes = Recipes.query.all()
-    return render_template('view_recipes.html', recipes=recipes)
+    average_ratings = {r.recipe_id: r.average_score for r in AvgRecipeRating.query.all()}
+    return render_template('view_recipes.html', recipes=recipes,average_ratings=average_ratings)
 
 @main.route('/view_recipes/<int:recipe_id>',methods = ['GET','POST'])
 def recipe_page(recipe_id):
@@ -111,7 +113,9 @@ def recipe_page(recipe_id):
         db.session.commit()
         flash('Review submitted successfully!', 'success')
         return redirect(url_for('main.recipe_page', recipe_id=recipe_id))
-    return render_template('recipe.html', recipe=recipe,form=form)
+    rating_entry = AvgRecipeRating.query.filter_by(recipe_id=recipe_id).first()
+    average_rating = rating_entry.average_score if rating_entry else None
+    return render_template('recipe.html', recipe=recipe,form=form,average_rating=average_rating)
 
 @main.route('/admin/users', methods = ['GET', 'POST'])
 @login_required

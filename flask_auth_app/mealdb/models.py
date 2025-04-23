@@ -92,3 +92,11 @@ class UserRestrictions(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete = 'CASCADE'), nullable = False)
     restriction_id = db.Column(db.Integer, db.ForeignKey('dietary_restrictions.dietary_restriction_id'), nullable = False)
     __table_args__ = (PrimaryKeyConstraint('user_id', 'restriction_id', name = 'user_restrictions_pkey'), )
+
+
+class AvgRecipeRating(db.Model):
+    __tablename__ = 'recipe_score'
+    __table_args__ = {'extend_existing': True}
+
+    recipe_id = db.Column(db.Integer, primary_key=True)
+    average_score = db.Column(db.Numeric(3, 2))

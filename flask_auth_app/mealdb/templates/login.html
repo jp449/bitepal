@@ -1,14 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-    <title>Login</title>
+<head>
+    <title>Login Page!</title>
+    <style>
+        body {
+            background-color: #f4f4f9;
+            text-align: center;
+            padding-top: 100px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        input {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+        }
+        button {
+                background-color: #4adcba;
+                color: white;
+                border: none;
+                padding: 15px 30px;
+                font-size: 20px;
+            }
+        button:hover {
+            background-color: #2bc032;
+        }
+
+        a {
+            color: #4adcba;
+            text-decoration: none;
+            font-size: 15px;
+        }
+     
+    </style>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1>Login Page!</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
-        <p>{{ form.username.label}} {{ form.username }}</p>
-        <p>{{ form.password.label }} {{ form.password }}</p>
-        <p>{{ form.submit }}</p>
+        <p>{{ form.username.label }}<br>{{ form.username }}</p>
+        <p>{{ form.password.label }}<br>{{ form.password }}</p>
+        <p><button type="submit">Login</button></p>
     </form>
     <a href="{{ url_for('main.register') }}">Don't have an account? Register here.</a>
 </body>

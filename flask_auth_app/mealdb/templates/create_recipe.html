@@ -2,19 +2,52 @@
 <html lang="en">
 <head>
     <title>Create Recipe</title>
+    <style>
+        body {
+            background-color: #e9e9ec;
+            text-align: center;
+        }
+  
+        form {
+            display: inline-block;
+            background-color: white;
+            padding: 35px;
+        }
+    
+        label {
+            font-weight: bold;
+        }
+        input, select, textarea {
+            padding: 8px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4adcba;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #5de463;
+        }
+    </style>
 </head>
 <body>
     <h1>Create a New Recipe</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
+
         <p>
             {{ form.title.label }}<br>
             {{ form.title(size=40) }}
         </p>
+
         <p>
             {{ form.calories.label }}<br>
             {{ form.calories() }}
         </p>
+
         <p>
             {{ form.region_category.label }}<br>
             {{ form.region_category() }}
@@ -24,6 +57,7 @@
             {{ form.instructions.label }}<br>
             {{ form.instructions(rows=5, cols=40) }}
         </p>
+
         <p>
             {{ form.servings.label }}<br>
             {{ form.servings() }}
