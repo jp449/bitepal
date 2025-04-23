@@ -26,11 +26,20 @@
 
     <!-- Display current preferences/allergies -->
     <h2>Current Preferences and Allergies</h2>
-    <ul>
-        {% for user_restriction, restriction in user_preferences %}
-            <li>{{ restriction.name }} ({{ restriction.dietary_preference }})</li>
-        {% endfor %}
-    </ul>
+    {% if user_preferences %}
+        <ul>
+            {% for user_restriction, restriction in user_preferences %}
+                <li>{{ restriction.name }} ({{ restriction.dietary_preference }})</li>
+                <!-- Delete restriction/allergy for each-->
+                <form method="Post" style="display:inline;">
+                    <input type="hidden" name ="delete_restriction_id" value="{{ restriction.dietary_restriction_id }}">
+                    <button type="submit">Delete</button>
+                </form>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no preferences or allergies added yet.</p>
+    {% endif %}
 
     <!-- Form to add new preferences/allergies -->
     <h2>Add a New Preference or Allergy</h2>
