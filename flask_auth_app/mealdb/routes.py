@@ -97,6 +97,9 @@ def view_recipes():
 def recipe_page(recipe_id):
     recipe = Recipes.query.get_or_404(recipe_id)
     form = ReviewForm()
+    #no review form if admin
+    if current_user.is_admin:
+        return render_template('recipe.html', recipe=recipe, form=None)
     if form.validate_on_submit():
         new_review = Reviews(
             score=int(form.score.data),
@@ -150,6 +153,9 @@ def delete_recipe(recipe_id):
 @login_required
 def create_recipe():
     form = RecipeForm()
+    if current_user.is_admin:
+        flash("Admins are not allowed to create recipes.", 'danger')
+        return redirect(url_for('main.home'))
     if form.validate_on_submit():
         new_recipe = Recipes(
             title = form.title.data,
@@ -193,7 +199,9 @@ def load_preferences():
     ).filter(UserRestrictions.user_id== current_user.user_id).all()
     
     all_restrictions = DietaryRestrictions.query.all()
-
+    if current_user.is_admin:
+        flash("Admins do not have dietary_restrictions.", 'danger')
+        return redirect(url_for('main.home'))
     if request.method == 'POST':
         restriction_id = request.form.get('restriction_id')
         new_restriction_name = request.form.get('new_restriction_name')
