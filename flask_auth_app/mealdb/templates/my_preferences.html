@@ -8,12 +8,35 @@
         body {
             background-color: #e1e1e7;
             color: #333;
-            text-align: center;
             padding: 60px;
         }
+        
+        .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .preferences {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .filtered-recipes {
+            flex: 1;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
         ul {
             list-style: none;
-            padding: 0;
+            padding: 0; 
             max-width: 400px;
             margin: auto;
         }
@@ -106,45 +129,66 @@
 </head>
 <body>
     <h1>My Preferences and Allergies</h1>
-    <h2>Current Preferences and Allergies</h2>
-    {% if user_preferences %}
-        <ul>
-            {% for user_restriction, restriction in user_preferences %}
-                <li>{{ restriction.name }} ({{ restriction.dietary_preference }})</li>
-                <!-- Delete restriction/allergy for each-->
-                <form method="Post" style="display:inline;">
-                    <input type="hidden" name ="delete_restriction_id" value="{{ restriction.dietary_restriction_id }}">
-                    <button type="submit">Delete</button>
-                </form>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>You have no preferences or allergies added yet.</p>
-    {% endif %}
+    <div class = "content">
+    <div class = "preferences">
+        <h2>Current Preferences and Allergies</h2>
+        {% if user_preferences %}
+            <ul>
+                {% for user_restriction, restriction in user_preferences %}
+                    <li>{{ restriction.name }} ({{ restriction.dietary_preference }})</li>
+                    <!-- Delete restriction/allergy for each-->
+                    <form method="Post" style="display:inline;">
+                        <input type="hidden" name ="delete_restriction_id" value="{{ restriction.dietary_restriction_id }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You have no preferences or allergies added yet.</p>
+        {% endif %}
 
-    <h2>Add a New Preference or Allergy</h2>
-    <form method="POST">
+        <h2>Add a New Preference or Allergy</h2>
+        <form method="POST">
 
-        <label for="restriction_id">Select an Existing Restriction:</label>
-        <select name="restriction_id" id="restriction_id">
-            <option value="">-- Select --</option>
-            {% for restriction in all_restrictions %}
-                <option value="{{ restriction.dietary_restriction_id }}">{{ restriction.name }} ({{ restriction.dietary_preference }})</option>
-            {% endfor %}
-        </select>
+            <label for="restriction_id">Select an Existing Restriction:</label>
+            <select name="restriction_id" id="restriction_id">
+                <option value="">-- Select --</option>
+                {% for restriction in all_restrictions %}
+                    <option value="{{ restriction.dietary_restriction_id }}">{{ restriction.name }} ({{ restriction.dietary_preference }})</option>
+                {% endfor %}
+            </select>
 
-        <label for="new_restriction_name">Or Add a New Restriction:</label>
-        <input type="text" name="new_restriction_name" id="new_restriction_name" placeholder="Enter restriction name" oninput="toggleTypeDropdown()">
+            <label for="new_restriction_name">Or Add a New Restriction:</label>
+            <input type="text" name="new_restriction_name" id="new_restriction_name" placeholder="Enter restriction name" oninput="toggleTypeDropdown()">
 
-        <label for="new_restriction_type" id="type_label" style="display: none;">Type (allergy/preference):</label>
-        <select name="new_restriction_type" id="new_restriction_type" style="display: none;">
-            <option value="allergy">Allergy</option>
-            <option value="preference">Preference</option>
-        </select>
+            <label for="new_restriction_type" id="type_label" style="display: none;">Type (allergy/preference):</label>
+            <select name="new_restriction_type" id="new_restriction_type" style="display: none;">
+                <option value="allergy">Allergy</option>
+                <option value="preference">Preference</option>
+            </select>
 
-        <!-- Submit button -->
-        <button type="submit">Add</button>
-    </form>
+            <!-- Submit button -->
+            <button type="submit">Add</button>
+        </form>
+    </div>
+    <div class ="filtered-recipes">
+        <h2>Recipes that fit your preferences</h2>
+        {% if filtered_recipes %}
+            <ul>
+                {% for recipe in filtered_recipes %}
+                    <li>
+                        <strong>{{ recipe.title }}</strong><br>
+                        Region: {{ recipe.region_category if recipe.region_category else 'Unknown' }}<br>
+                        Calories: {{ recipe.calories if recipe.calories else 'N/A' }}<br>
+                        Servings: {{ recipe.servings if recipe.servings else 'N/A' }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recipes match your preferences and allergies.</p>
+        {% endif %}
+    </div>
+</div>
     <a href="{{ url_for('main.home') }}">
         <button>Home</button>
     </a><br>

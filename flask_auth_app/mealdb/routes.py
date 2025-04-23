@@ -1,11 +1,17 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, AvgRecipeRating,SavedRecipeList
+
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, AvgRecipeRating, RecipeIngredients, SavedRecipeList
+
 from . import db
+
+from sqlalchemy.sql.expression import any_
+from sqlalchemy import exists
 
 from flask_login import login_user,  login_required, current_user, logout_user
 from functools import wraps
-
+#REMOVE THIS
+from sqlalchemy.dialects import postgresql
 #admin only access message
 def admin_required(f):
     @wraps(f)
@@ -198,14 +204,88 @@ def create_ingredients():
 @main.route('/my_preferences', methods = ['GET', 'POST'])
 @login_required
 def load_preferences():
+    if current_user.is_admin:
+        flash("Admins do not have dietary_restrictions.", 'danger')
+        return redirect(url_for('main.home'))
     user_preferences = db.session.query(UserRestrictions, DietaryRestrictions).join(
         DietaryRestrictions, UserRestrictions.restriction_id == DietaryRestrictions.dietary_restriction_id
     ).filter(UserRestrictions.user_id== current_user.user_id).all()
     
     all_restrictions = DietaryRestrictions.query.all()
-    if current_user.is_admin:
-        flash("Admins do not have dietary_restrictions.", 'danger')
-        return redirect(url_for('main.home'))
+    
+    allergies = db.session.query(DietaryRestrictions.name).join(UserRestrictions,
+        UserRestrictions.restriction_id == DietaryRestrictions.dietary_restriction_id
+    ).filter(
+        UserRestrictions.user_id == current_user.user_id,
+        DietaryRestrictions.dietary_preference == 'allergy'
+    ).all()
+    allergy_names = [allergy.name for allergy in allergies]
+
+    preferences = db.session.query(DietaryRestrictions.name).join(UserRestrictions,
+        UserRestrictions.restriction_id == DietaryRestrictions.dietary_restriction_id
+    ).filter(
+        UserRestrictions.user_id == current_user.user_id,
+        DietaryRestrictions.dietary_preference == 'preference'
+    ).all()
+    preference_names = [preference.name for preference in preferences]
+    
+    #for specific preferences, allergies, filter
+    excluded_ingredient_types = []
+    excluded_ingredients = []
+    if 'tree nuts' in allergy_names:
+        excluded_ingredient_types.extend(['nut'])
+    if 'waters' in allergy_names:
+        excluded_ingredient_types.extend(['water'])
+    if 'gluten' in allergy_names:
+        excluded_ingredient_types.extend(['grain'])
+    if 'peanuts' in allergy_names:
+        excluded_ingredients.extend(['peanuts'])
+    if 'shellfish' in allergy_names:
+        excluded_ingredient_types.extend(['seafood'])
+    if 'fruit' in allergy_names:
+        excluded_ingredient_types.extend(['fruit', 'juice'])
+    if 'kiwi' in allergy_names:
+        excluded_ingredients.extend(['kiwi'])
+    
+    #preferences
+    if 'vegetarian' in preference_names:
+        excluded_ingredient_types.extend(['meat', 'poultry', 'seafood'])
+
+    if 'pescatarian' in preference_names:
+        excluded_ingredient_types.extend(['meat', 'poultry'])
+    if 'lactose-intolerance' in preference_names:
+        excluded_ingredient_types.extend(['dairy', 'egg'])
+    if 'keto' in preference_names:
+        excluded_ingredient_types.extend(['sugar'])
+
+    print("Excluded Ingredient Types:", excluded_ingredient_types)
+    print("Excluded Ingredients:", excluded_ingredients)
+
+    filtered_recipes = Recipes.query
+
+    # only filter if stuff should be excluded
+    if excluded_ingredient_types or excluded_ingredients:
+        subquery = db.session.query(RecipeIngredients.recipe_id).join(
+            Ingredients, RecipeIngredients.ingredient_id == Ingredients.ingredient_id
+        )
+
+        if excluded_ingredient_types:
+            subquery = subquery.filter(
+                Ingredients.type.ilike(any_(excluded_ingredient_types))
+            )
+        if excluded_ingredients:
+            subquery = subquery.filter(
+                Ingredients.name.ilike(any_(excluded_ingredients))
+            )
+
+        # if recipe doesn't have anything of type/name excluded in its ingredients
+        subquery = subquery.subquery()
+        filtered_recipes = filtered_recipes.filter(
+            ~exists().where(Recipes.recipe_id == subquery.c.recipe_id)
+        )
+    
+    filtered_recipes.distinct().all()
+
     if request.method == 'POST':
         restriction_id = request.form.get('restriction_id')
         new_restriction_name = request.form.get('new_restriction_name')
@@ -257,7 +337,8 @@ def load_preferences():
     return render_template(
         'my_preferences.html',
         user_preferences=user_preferences,
-        all_restrictions=all_restrictions
+        all_restrictions=all_restrictions, 
+        filtered_recipes=filtered_recipes
     )
 @main.route('/save_recipe/<int:recipe_id>', methods=['POST'])
 @login_required
