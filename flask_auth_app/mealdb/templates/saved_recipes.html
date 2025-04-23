@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saved Recipes</title>
+    <style>
+        body {
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+            padding: 60px;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            max-width: 600px;
+            margin: auto;
+        }
+        li {
+            background-color: white;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        a {
+            font-weight: bold;
+            text-decoration: none;
+            color: #4adcba;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Saved Recipes</h1>
+    {% if recipes %}
+        <ul>
+            {% for recipe in recipes %}
+            <li>
+                <a href="{{ url_for('main.recipe_page', recipe_id=recipe.recipe_id) }}">{{ recipe.title }}</a>
+                <p>By {{ recipe.author.username }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't saved any recipes yet.</p>
+    {% endif %}
+</body>
+</html>
