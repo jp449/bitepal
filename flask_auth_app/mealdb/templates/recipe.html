@@ -6,6 +6,7 @@
 </head>
 <body>
 <h1>{{ recipe.title }} - by {{ recipe.author.username }}</h1>
+<p>Average Rating: {{ average_rating | round(2) if average_rating is not none else 'Not rated yet'}}/5 </p>
 <p>Calories: {{ recipe.calories }}</p>
 <p>Region: {{ recipe.region_category }}</p>
 <p>Servings: {{ recipe.servings }}</p>
