@@ -4,19 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Preferences</title>
+    <style>
+        body {
+            background-color: #e1e1e7;
+            color: #333;
+            text-align: center;
+            padding: 60px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            max-width: 400px;
+            margin: auto;
+        }
+        li {
+            background-color: white;
+            margin: 9px;
+            padding: 14px;
+        }
+        form {
+            display: inline-block;
+            background-color: white;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        label, input, select {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 16px;
+            width: 100%;
+        }
+    
+        button {
+            background-color: #4adcba;
+            border: none;
+            padding: 15px 30px;
+            font-size: 17px;
+        }
+        button:hover {
+            background-color: #35d53d;
+        }
+       
+    </style>
     <script>
         function toggleTypeDropdown() {
             const newRestrictionInput = document.getElementById('new_restriction_name');
             const typeLabel = document.getElementById('type_label');
             const typeDropdown = document.getElementById('new_restriction_type');
-            
-            // Show the dropdown only if new restriction name is added
+
             if (newRestrictionInput.value.trim() !== '') {
-                typeLabel.style.display = 'block'; // Show the label
-                typeDropdown.style.display = 'block'; // Show the dropdown
+                typeLabel.style.display = 'block';
+                typeDropdown.style.display = 'block';
             } else {
-                typeLabel.style.display = 'none'; // Hide the label
-                typeDropdown.style.display = 'none'; // Hide the dropdown
+                typeLabel.style.display = 'none';
+                typeDropdown.style.display = 'none';
             }
         }
     </script>
@@ -24,7 +65,6 @@
 <body>
     <h1>My Preferences and Allergies</h1>
 
-    <!-- Display current preferences/allergies -->
     <h2>Current Preferences and Allergies</h2>
     <ul>
         {% for user_restriction, restriction in user_preferences %}
@@ -32,10 +72,9 @@
         {% endfor %}
     </ul>
 
-    <!-- Form to add new preferences/allergies -->
     <h2>Add a New Preference or Allergy</h2>
     <form method="POST">
-        <!-- Dropdown for existing restrictions -->
+
         <label for="restriction_id">Select an Existing Restriction:</label>
         <select name="restriction_id" id="restriction_id">
             <option value="">-- Select --</option>
@@ -43,26 +82,21 @@
                 <option value="{{ restriction.dietary_restriction_id }}">{{ restriction.name }} ({{ restriction.dietary_preference }})</option>
             {% endfor %}
         </select>
-        <br><br>
 
-        <!-- Input for new restriction -->
         <label for="new_restriction_name">Or Add a New Restriction:</label>
         <input type="text" name="new_restriction_name" id="new_restriction_name" placeholder="Enter restriction name" oninput="toggleTypeDropdown()">
-        <br><br>
 
-        <!-- Dropdown for new restriction type -->
-        <label for="new_restriction_type" id = "type_label" style= "display: none;">Type (allergy/preference):</label>
+        <label for="new_restriction_type" id="type_label" style="display: none;">Type (allergy/preference):</label>
         <select name="new_restriction_type" id="new_restriction_type" style="display: none;">
             <option value="allergy">Allergy</option>
             <option value="preference">Preference</option>
         </select>
-        <br><br>
 
-        <!-- Submit button -->
-        <button type="submit">Add</button>
-    </form>
-    <a href="{{ url_for('main.home') }}">
-        <button>Home</button>
-    </a><br>
+        <div style="display: flex; gap: 20px; margin-top: 20px;">
+            <button type="submit">Add</button>
+            <button type="button" onclick="window.location.href='{{ url_for('main.home') }}'">Home</button>
+        </div>
+        </form>
+        
 </body>
 </html>
