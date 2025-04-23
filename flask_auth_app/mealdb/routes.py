@@ -233,7 +233,7 @@ def load_preferences():
                 )
                 db.session.add(new_user_restriction)
                 db.session.commit()
-                flash("Preference/Allergy added successfully!", 'success')
+                flash("Preference/Allergy added", 'success')
             else:
                 flash("This preference/allergy is already added.", 'info')
         
