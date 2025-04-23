@@ -1,5 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+    <style>
+        body {
+            background-color: #ededf1;
+            text-align: center;
+        }
+        h1 {
+            font-size: 40px;
+        }
+        ul {
+            list-style: none;
+            max-width: 640px;
+            margin: auto;
+        }
+        li {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: left;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+        h2 {
+            margin: 0 0 10px;
+            color: #4adcba;
+        }
+        h3, h4 {
+            margin: 15px 0 5px;
+        }
+        
+        .review-list {
+            padding-left: 20px;
+        }
+      
+        a {
+            color: #4adcba;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        button {
+            background-color: #4adcba;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #35d53d;
+        }
+        button a {
+            color: white;
+        }
+    </style>
 <head>
     <meta charset="UTF-8">
     <title></title>
@@ -56,7 +108,7 @@
         {{ form.review_text(rows=4, cols=50) }}
     </p>
 
-    <p>{{ form.submit() }}</p>
+    <p><button>{{ form.submit() }}</button></p>
 </form>
 {% else %}
     <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a review.</p>

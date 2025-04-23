@@ -34,14 +34,13 @@ class RecipeForm(FlaskForm):
     
 class IngredientsForm(FlaskForm):
     name = StringField('Ingredient Name', validators=[DataRequired()])
-    ingredient_type = SelectField('Ingredient Type', choices = [
+    type = SelectField('Ingredient Type', choices = [
         ('vegetable', 'Vegetable'),
         ('fruit', 'Fruit'),
         ('grain', 'Grain'),
         ('protein', 'Protein'),
         ('dairy', 'Dairy'),
-        ('spice', 'Spice'),
-        ('herb', 'Herb'),
+        ('seasoning', 'Seasoning'),
         ('oil', 'Oil'),
         ('sauce', 'Sauce'),
         ('condiment', 'Condiment'),
@@ -54,7 +53,9 @@ class IngredientsForm(FlaskForm):
         ('meat', 'Meat'),
         ('poultry', 'Poultry'),
         ('egg', 'Egg'),
-        ('dried fruit', 'Dried Fruit'),
         ('cereal', 'Cereal'),
-        ('snack', 'Snack')
+        ('snack', 'Snack'), 
+        ('juice', 'Juice'), 
+        ('water', 'Water'),
+        ('alcohol', 'Alcohol')
     ])
