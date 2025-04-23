@@ -28,15 +28,22 @@
             {{ form.servings.label }}<br>
             {{ form.servings() }}
         </p>
-        <p>
-            {{ form.name.label }}
-            {{form.name()}}
-            {{ form.ingredient_type.label}}
-            {{ form.ingredient_type()}}
-
-
-        </p>
-        <p>{{ form.submit() }}</p>
+        <h3>Ingredients</h3>
+            <p>
+                    {{ingredient_form.name.label}}<br>
+                    {{ingredient_form.name(size=40)}}
+            </p>
+            <p>
+                    {{ingredient_form.type.label}}<br>
+                    {{ingredient_form.type()}}
+            </p>
+            <p>
+                    {{recipe_ingredient.amount.label}}<br>
+                    {{recipe_ingredient.amount()}}<br>
+                    {{recipe_ingredient.unit.label}}<br>
+                    {{recipe_ingredient.unit()}}
+            </p>
+        <p>{{ form.submit() }}</p> 
     </form>
 </body>
 </html>
