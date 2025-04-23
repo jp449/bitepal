@@ -40,8 +40,7 @@ class IngredientsForm(FlaskForm):
         ('grain', 'Grain'),
         ('protein', 'Protein'),
         ('dairy', 'Dairy'),
-        ('spice', 'Spice'),
-        ('herb', 'Herb'),
+        ('seasoning', 'Seasoning'),
         ('oil', 'Oil'),
         ('sauce', 'Sauce'),
         ('condiment', 'Condiment'),
@@ -54,7 +53,9 @@ class IngredientsForm(FlaskForm):
         ('meat', 'Meat'),
         ('poultry', 'Poultry'),
         ('egg', 'Egg'),
-        ('dried fruit', 'Dried Fruit'),
         ('cereal', 'Cereal'),
-        ('snack', 'Snack')
+        ('snack', 'Snack'), 
+        ('juice', 'Juice'), 
+        ('water', 'Water'),
+        ('alcohol', 'Alcohol')
     ])
