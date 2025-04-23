@@ -34,7 +34,7 @@ class RecipeForm(FlaskForm):
     
 class IngredientsForm(FlaskForm):
     name = StringField('Ingredient Name', validators=[DataRequired()])
-    ingredient_type = SelectField('Ingredient Type', choices = [
+    type = SelectField('Ingredient Type', choices = [
         ('vegetable', 'Vegetable'),
         ('fruit', 'Fruit'),
         ('grain', 'Grain'),

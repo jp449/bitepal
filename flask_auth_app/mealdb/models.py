@@ -55,13 +55,15 @@ class Recipes(db.Model):
     ingredient: Mapped['Ingredients'] = relationship('Ingredients', secondary='recipe_ingredients', backref='recipes')
     
     
+    
 class Ingredients(db.Model):
     __tablename__='ingredients'
     name = db.Column(db.Text, nullable = False)
     ingredient_id = db.Column(db.Integer, primary_key = True)
     type = db.Column(db.Text, nullable = False)
     
-    recipe: Mapped['Recipes'] = relationship('Recipes', secondary='recipe_ingredients', backref='ingredients')
+    recipe: Mapped['Recipes'] = relationship('Recipes', secondary='recipe_ingredients', backref='ingredients', viewonly = True)
+
     # recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable = False)
     # recipe = db.relationship('Recipes', backref='ingredients')
     

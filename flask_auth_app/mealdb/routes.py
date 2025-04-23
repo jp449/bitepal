@@ -176,14 +176,14 @@ def create_ingredients():
     if form.validate_on_submit():
         new_ingredient = Ingredients(
             name = request.form.name.data,
-            ingredient_type = request.form.ingredient_type.data
+            type = request.form.type.data
         )
         db.session.add(new_ingredient)
         db.session.commit()
         
         flash("Ingredient created successfully!")
         return redirect(url_for('main.my_recipes'))
-    return render_template('create_ingredient.html', form = form)
+    return render_template('create_recipe.html', form = form)
 
 @main.route('/my_preferences', methods = ['GET', 'POST'])
 @login_required
