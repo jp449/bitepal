@@ -76,13 +76,14 @@ class RecipeIngredients(db.Model):
         PrimaryKeyConstraint('recipe_id', 'ingredient_id', name = 'recipe_ingredients_pkey'),
     )
     
-    
+
 class DietaryRestrictions(db.Model):
     __tablename__ = 'dietary_restrictions'
     dietary_restriction_id = db.Column(db.Integer, primary_key = True)
     dietary_preference = db.Column(db.String, nullable = False)
     name = db.Column(db.Text, nullable = False)
     __table_args__ = (CheckConstraint("dietary_preference IN ('allergy', 'preference')", name = 'dietary_preference_check'),)
+
     
 class UserRestrictions(db.Model):
     __tablename__ = 'user_restrictions'

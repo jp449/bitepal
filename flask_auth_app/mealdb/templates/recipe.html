@@ -9,18 +9,20 @@
 <p>Calories: {{ recipe.calories }}</p>
 <p>Region: {{ recipe.region_category }}</p>
 <p>Servings: {{ recipe.servings }}</p>
-<h2>Ingredients: </h2> {% if recipe.ingredients%}
-    <ul>
-        {%for ingredient in recipe.ingredients%}
-    <li>
-        <p>{{recipe.ingredients}}</p>
-    </li> 
-    {%endfor%}
+<h2>Ingredients: 
+</h2>
+    {% if recipe.ingredients%}
+        <ul>
+            {% for ingredient in recipe.ingredients %}
+                <li>
+                    <p>{{ ingredient.name}} ; {{ingredient.type}}</p>
 
-</ul>
-{% else %}
-    <p>No ingredients available.</p>
-{% endif %}
+                </li> 
+            {%endfor%}
+        </ul>
+    {% else %}
+        <p> No ingredients available. </p>
+    {% endif %}
 
 <h2>Instructions:</h2> <p>{{ recipe.instructions | replace('\n', '<br>') }}</p>
 
