@@ -45,6 +45,48 @@
             background-color: #35d53d;
         }
        
+        .flashes {
+            list-style-type: none;
+            padding:0;
+            margin: 10px 0;
+            max-width: 325px;
+        }
+
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            text-align: left;
+            color: white;
+            -webkit-animation: cssAnimation 3s forwards;
+            animation: cssAnimation 3s forwards;
+        }
+
+        .success {
+            background-color: green;
+        }
+
+        .danger {
+            background-color: red;
+        }
+
+        .info {
+            background-color: aquamarine;
+        }
+
+        @keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
+
+        @-webkit-keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
     </style>
     <script>
         function toggleTypeDropdown() {
@@ -64,13 +106,21 @@
 </head>
 <body>
     <h1>My Preferences and Allergies</h1>
-
     <h2>Current Preferences and Allergies</h2>
-    <ul>
-        {% for user_restriction, restriction in user_preferences %}
-            <li>{{ restriction.name }} ({{ restriction.dietary_preference }})</li>
-        {% endfor %}
-    </ul>
+    {% if user_preferences %}
+        <ul>
+            {% for user_restriction, restriction in user_preferences %}
+                <li>{{ restriction.name }} ({{ restriction.dietary_preference }})</li>
+                <!-- Delete restriction/allergy for each-->
+                <form method="Post" style="display:inline;">
+                    <input type="hidden" name ="delete_restriction_id" value="{{ restriction.dietary_restriction_id }}">
+                    <button type="submit">Delete</button>
+                </form>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no preferences or allergies added yet.</p>
+    {% endif %}
 
     <h2>Add a New Preference or Allergy</h2>
     <form method="POST">
@@ -92,11 +142,20 @@
             <option value="preference">Preference</option>
         </select>
 
-        <div style="display: flex; gap: 20px; margin-top: 20px;">
-            <button type="submit">Add</button>
-            <button type="button" onclick="window.location.href='{{ url_for('main.home') }}'">Home</button>
-        </div>
-        </form>
-        
+        <!-- Submit button -->
+        <button type="submit">Add</button>
+    </form>
+    <a href="{{ url_for('main.home') }}">
+        <button>Home</button>
+    </a><br>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
 </html>

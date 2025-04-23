@@ -99,6 +99,9 @@ def view_recipes():
 def recipe_page(recipe_id):
     recipe = Recipes.query.get_or_404(recipe_id)
     form = ReviewForm()
+    #no review form if admin
+    if current_user.is_admin:
+        return render_template('recipe.html', recipe=recipe, form=None)
     if form.validate_on_submit():
         new_review = Reviews(
             score=int(form.score.data),
@@ -154,6 +157,9 @@ def delete_recipe(recipe_id):
 @login_required
 def create_recipe():
     form = RecipeForm()
+    if current_user.is_admin:
+        flash("Admins are not allowed to create recipes.", 'danger')
+        return redirect(url_for('main.home'))
     if form.validate_on_submit():
         new_recipe = Recipes(
             title = form.title.data,
@@ -180,14 +186,14 @@ def create_ingredients():
     if form.validate_on_submit():
         new_ingredient = Ingredients(
             name = request.form.name.data,
-            ingredient_type = request.form.ingredient_type.data
+            type = request.form.type.data
         )
         db.session.add(new_ingredient)
         db.session.commit()
         
         flash("Ingredient created successfully!")
         return redirect(url_for('main.my_recipes'))
-    return render_template('create_ingredient.html', form = form)
+    return render_template('create_recipe.html', form = form)
 
 @main.route('/my_preferences', methods = ['GET', 'POST'])
 @login_required
@@ -197,7 +203,9 @@ def load_preferences():
     ).filter(UserRestrictions.user_id== current_user.user_id).all()
     
     all_restrictions = DietaryRestrictions.query.all()
-
+    if current_user.is_admin:
+        flash("Admins do not have dietary_restrictions.", 'danger')
+        return redirect(url_for('main.home'))
     if request.method == 'POST':
         restriction_id = request.form.get('restriction_id')
         new_restriction_name = request.form.get('new_restriction_name')
@@ -229,9 +237,21 @@ def load_preferences():
                 )
                 db.session.add(new_user_restriction)
                 db.session.commit()
-                flash("Preference/Allergy added successfully!", 'success')
+                flash("Preference/Allergy added", 'success')
             else:
                 flash("This preference/allergy is already added.", 'info')
+        
+        #deleting own dietary restrictions
+        delete_restriction_id = request.form.get('delete_restriction_id')
+        if delete_restriction_id:
+            user_restriction = UserRestrictions.query.filter_by(
+                user_id =current_user.user_id, restriction_id = delete_restriction_id).first()
+            if user_restriction:
+                db.session.delete(user_restriction)
+                db.session.commit()
+                flash("Preference/Allergy removed", 'success')
+            else:
+                flash("Preference/Allergy couldn't be removed", 'danger')
         return redirect(url_for('main.load_preferences'))
     
     return render_template(

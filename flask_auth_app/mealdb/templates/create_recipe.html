@@ -62,10 +62,15 @@
             {{ form.servings.label }}<br>
             {{ form.servings() }}
         </p>
+        <p>
+            {{ form.name.label }}
+            {{form.name()}}
+            {{ form.ingredient_type.label}}
+            {{ form.ingredient_type()}}
 
-        <p><strong>Add Ingredients:</strong></p>
 
-        <p><button type="submit">Submit</button></p>
+        </p>
+        <p>{{ form.submit() }}</p>
     </form>
 </body>
 </html>
