@@ -236,6 +236,18 @@ def load_preferences():
                 flash("Preference/Allergy added successfully!", 'success')
             else:
                 flash("This preference/allergy is already added.", 'info')
+        
+        #deleting own dietary restrictions
+        delete_restriction_id = request.form.get('delete_restriction_id')
+        if delete_restriction_id:
+            user_restriction = UserRestrictions.query.filter_by(
+                user_id =current_user.user_id, restriction_id = delete_restriction_id).first()
+            if user_restriction:
+                db.session.delete(user_restriction)
+                db.session.commit()
+                flash("Preference/Allergy removed", 'success')
+            else:
+                flash("Preference/Allergy couldn't be removed", 'danger')
         return redirect(url_for('main.load_preferences'))
     
     return render_template(
