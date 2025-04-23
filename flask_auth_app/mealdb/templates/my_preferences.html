@@ -20,6 +20,8 @@
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
             text-align: left;
             color: white;
+            -webkit-animation: cssAnimation 3s forwards;
+            animation: cssAnimation 3s forwards;
         }
 
         .success {
@@ -32,6 +34,18 @@
 
         .info {
             background-color: aquamarine;
+        }
+
+        @keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
+
+        @-webkit-keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
         }
     </style>
     <script>
