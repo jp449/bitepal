@@ -77,7 +77,7 @@
 </head>
 <body>
     <h1>Create a New Recipe</h1>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
 
         <p>
@@ -104,6 +104,9 @@
             {{ form.servings.label }}<br>
             {{ form.servings() }}
         </p>
+
+        <p>{{ form.image.label }}<br>
+            {{ form.image() }}</p>
         <h3>Ingredients</h3>
         <div id = "ingredient-container">
             <div class = "ingredient-group">

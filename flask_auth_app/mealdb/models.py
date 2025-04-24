@@ -52,7 +52,7 @@ class Recipes(db.Model):
     author = db.relationship('Users', backref='recipes')
     
     ingredient: Mapped['Ingredients'] = relationship('Ingredients', secondary='recipe_ingredients', backref='recipes')
-    
+    image_path = db.Column(db.String(255))
     
     
 class Ingredients(db.Model):
