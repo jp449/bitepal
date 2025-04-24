@@ -242,6 +242,65 @@ def create_recipe():
     return render_template('create_recipe.html', form = recipe_form, ingredient_form = ingredient_form, recipe_ingredient = recipe_ingredient)
 
 
+@main.route('/edit_recipe/<int:recipe_id>', methods=['GET', 'POST'])
+@login_required
+def edit_recipe(recipe_id):
+    recipe = Recipes.query.get_or_404(recipe_id)
+    if current_user.is_admin:
+        flash("Admins are not allowed to create recipes.", 'danger')
+        return redirect(url_for('main.home'))
+    recipe_form = RecipeForm(obj=recipe)
+    # ingredient_form = IngredientsForm()
+    # recipe_ingredient = RecipeIngredientsForm()
+    if recipe_form.validate_on_submit():
+        if recipe_form.image.data:
+            image = recipe_form.image.data
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(current_app.root_path, 'static/uploads', filename))
+            recipe.image_path = f'uploads/{filename}'
+
+        recipe.title = recipe_form.title.data
+        recipe.calories = recipe_form.calories.data
+        recipe.region_category = recipe_form.region_category.data
+        recipe.instructions = recipe_form.instructions.data
+        recipe.servings = recipe_form.servings.data
+
+
+
+        db.session.commit()
+        return redirect(url_for('main.my_recipes'))
+        #
+        # names = request.form.getlist('name')
+        # types = request.form.getlist('type')
+        # amounts = request.form.getlist('amount')
+        # units = request.form.getlist('unit')
+        #
+        # for name, type_, amount, unit in zip(names, types, amounts, units):
+        #     if name.strip() == "" or unit.strip() == "":
+        #         continue
+        #     if ingredient_form.validate_on_submit():
+        #         new_ingredient = Ingredients(
+        #             name=name,
+        #             type=type_
+        #         )
+        #
+        #         db.session.add(new_ingredient)
+        #         db.session.flush()
+        #
+        #         new_recipe_ingredient = RecipeIngredients(
+        #             recipe_id=new_recipe.recipe_id,
+        #             ingredient_id=new_ingredient.ingredient_id,
+        #             amount=amount,
+        #             unit=unit
+        #         )
+        #         db.session.add(new_recipe_ingredient)
+        # db.session.commit()
+        #
+        # return redirect(url_for('main.my_recipes'))
+
+    return render_template('edit_recipe.html', form=recipe_form)
+
+
 @main.route('/my_preferences', methods = ['GET', 'POST'])
 @login_required
 def load_preferences():
