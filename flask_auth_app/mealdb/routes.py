@@ -462,6 +462,14 @@ def saved_recipes():
     recipes = Recipes.query.filter(Recipes.recipe_id.in_(recipe_ids)).all()
     return render_template('saved_recipes.html', recipes=recipes)
 
+@main.route('/delete_saved_recipe/<int:recipe_id>', methods=['POST'])
+@login_required
+def delete_saved_recipe(recipe_id):
+    saved= SavedRecipeList.query.filter_by(user_id=current_user.user_id, recipe_id=recipe_id).first()
+    if saved:
+        db.session.delete(saved)
+        db.session.commit()
+    return redirect(url_for('main.saved_recipes'))
 
 
     

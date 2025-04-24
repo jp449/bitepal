@@ -42,6 +42,16 @@
             <li>
                 <a href="{{ url_for('main.recipe_page', recipe_id=recipe.recipe_id) }}">{{ recipe.title }}</a>
                 <p>By {{ recipe.author.username }}</p>
+                <form action="{{ url_for('main.delete_saved_recipe', recipe_id=recipe.recipe_id) }}" method="POST" style="display:inline;">
+                    <button type="submit" style="
+                        background: none;
+                        border: none;
+                        color: #c23e30;
+                        cursor: pointer;
+                        padding: 0;
+                    ">Delete</button>
+                </form>
+                
             </li>
             {% endfor %}
         </ul>
