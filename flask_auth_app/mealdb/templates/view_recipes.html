@@ -30,6 +30,48 @@
             color: #4adcba;
             font-size: 20px;
         }
+        .flashes {
+            list-style-type: none;
+            padding:0;
+            margin: 10px 0;
+            max-width: 325px;
+        }
+
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            text-align: left;
+            color: white;
+            -webkit-animation: cssAnimation 3s forwards;
+            animation: cssAnimation 3s forwards;
+        }
+
+        .success {
+            background-color: green;
+        }
+
+        .danger {
+            background-color: red;
+        }
+
+        .info {
+            background-color: aquamarine;
+        }
+
+        @keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
+
+        @-webkit-keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
 
     </style>
 </head>
@@ -60,5 +102,14 @@
             </li>
         {% endfor %}
     </ul>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
 </html>
