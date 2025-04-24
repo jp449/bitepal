@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
-from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm
-
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, AvgRecipeRating, RecipeIngredients, SavedRecipeList
-
+from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm, RecipeIngredientsForm
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients
 from . import db
 
 from sqlalchemy.sql.expression import any_
@@ -178,44 +176,54 @@ def delete_recipe(recipe_id):
 @main.route('/create_recipe', methods=['GET', 'POST'])
 @login_required
 def create_recipe():
-    form = RecipeForm()
+    recipe_form = RecipeForm()
     if current_user.is_admin:
         flash("Admins are not allowed to create recipes.", 'danger')
         return redirect(url_for('main.home'))
-    if form.validate_on_submit():
+    ingredient_form = IngredientsForm()
+    recipe_ingredient = RecipeIngredientsForm()
+    if recipe_form.validate_on_submit():
         new_recipe = Recipes(
-            title = form.title.data,
-            calories = form.calories.data,
-            region_category = form.region_category.data,
-            instructions = form.instructions.data,
-            servings = form.servings.data,
+            title = recipe_form.title.data,
+            calories = recipe_form.calories.data,
+            region_category = recipe_form.region_category.data,
+            instructions = recipe_form.instructions.data,
+            servings = recipe_form.servings.data,
             user_id = current_user.user_id
-        )  
-        db.session.add(new_recipe)
-        db.session.commit()
-        
-        flash("Recipe created successfully!")
-        return redirect(url_for('main.my_recipes'))
-    return render_template('create_recipe.html', form = form)
-
-@main.route('/create_ingredient', methods=['GET', 'POST'])
-@login_required
-def create_ingredients():
-    form = IngredientsForm()
-    if current_user.is_admin:
-        flash("Admins are not allowed to create recipes.", 'danger')
-        return redirect(url_for('main.home'))
-    if form.validate_on_submit():
-        new_ingredient = Ingredients(
-            name = request.form.name.data,
-            type = request.form.type.data
         )
-        db.session.add(new_ingredient)
+        db.session.add(new_recipe)
+        db.session.flush()
+        
+        names = request.form.getlist('name')
+        types = request.form.getlist('type')
+        amounts = request.form.getlist('amount')
+        units = request.form.getlist('unit')
+        
+        for name, type_, amount, unit in zip(names, types, amounts, units):
+            if name.strip() == "" or unit.strip() == "":
+                continue
+            if ingredient_form.validate_on_submit():
+                new_ingredient = Ingredients(
+                    name = name,
+                    type = type_
+                )
+                
+                db.session.add(new_ingredient)
+                db.session.flush()
+                
+                new_recipe_ingredient = RecipeIngredients(
+                    recipe_id = new_recipe.recipe_id,
+                    ingredient_id = new_ingredient.ingredient_id,
+                    amount = amount,
+                    unit = unit
+                )
+                db.session.add(new_recipe_ingredient )
         db.session.commit()
         
-        flash("Ingredient created successfully!")
         return redirect(url_for('main.my_recipes'))
-    return render_template('create_recipe.html', form = form)
+
+    return render_template('create_recipe.html', form = recipe_form, ingredient_form = ingredient_form, recipe_ingredient = recipe_ingredient)
+
 
 @main.route('/my_preferences', methods = ['GET', 'POST'])
 @login_required
