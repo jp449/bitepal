@@ -100,12 +100,18 @@ def admin_dashboard():
                 flash(f"User {user.username} not found", 'danger')
         elif entity_type == 'recipe':
             recipe = Recipes.query.get(entity_id)
-            if recipe:
+            try:
+                recipe = Recipes.query.get_or_404(entity_id)
+                print(f"Deleting recipe: {recipe.title}")
+                # Admins can delete any recipe
+                RecipeIngredients.query.filter_by(recipe_id=entity_id).delete()
                 db.session.delete(recipe)
                 db.session.commit()
                 flash(f"Recipe '{recipe.title}' deleted successfully.", 'success')
-            else:
-                flash("Recipe not found.", 'danger')
+            except Exception as e:
+                db.session.rollback()
+                print("Error deleting recipe.")
+                print("Error deleting recipe:", str(e))
 
         elif entity_type == 'review':
             review = Reviews.query.get(entity_id)

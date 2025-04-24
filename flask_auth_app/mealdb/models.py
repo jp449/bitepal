@@ -18,6 +18,7 @@ class Users(db.Model, UserMixin):
         return str(self.user_id)
 
     reviews = db.relationship('Reviews', back_populates='user', cascade='all, delete-orphan')
+    saved_recipes = db.relationship('SavedRecipeList', back_populates='user', cascade='all, delete-orphan')
 
 
 class Reviews(db.Model):
@@ -50,7 +51,8 @@ class Recipes(db.Model):
 
     reviews = db.relationship('Reviews', back_populates='recipe', lazy=True)
     author = db.relationship('Users', backref='recipes')
-    
+    saved_by = db.relationship('SavedRecipeList', back_populates='recipe', cascade='all, delete-orphan')
+
     ingredient: Mapped['Ingredients'] = relationship('Ingredients', secondary='recipe_ingredients', backref='recipes')
     image_path = db.Column(db.String(255))
     
@@ -105,6 +107,6 @@ class SavedRecipeList(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete = 'CASCADE'), primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete = 'CASCADE'), primary_key=True)
 
-    user = db.relationship('Users', backref='saved_recipes')
-    recipe = db.relationship('Recipes', backref='saved_by')
+    user = db.relationship('Users', back_populates='saved_recipes')
+    recipe = db.relationship('Recipes', back_populates='saved_by')
 
