@@ -73,11 +73,15 @@
                 <p><strong>Region:</strong> {{ recipe.region_category }}</p>
                 <p><strong>Servings:</strong> {{ recipe.servings }}</p>
                 <p><strong>Instructions:</strong><br> {{ recipe.instructions.replace('\\n', '<br>')|safe }}</p>
-                <p><strong>Ingredients:</strong><br> {% if recipe.ingredients %}
+                <p><strong>Ingredients:</strong><br> 
+                    {% if recipe.recipe_ingredients %}
                     <ul>
-                        {% for ingredient in recipe.ingredients %}
+                        {% for recipe_ingredient in recipe.recipe_ingredients %}
                             <li>
-                                <p>{{ ingredient.name }} | {{ ingredient.type }}</p>
+                                {{ recipe_ingredient.ingredient.name }} | 
+                                {{ recipe_ingredient.ingredient.type }} | 
+                                {{ recipe_ingredient.amount }} {{ recipe_ingredient.ingredient.name }} | {{ recipe_ingredient.unit }}
+                            
                             </li>
                         {% endfor %}
                     </ul>
