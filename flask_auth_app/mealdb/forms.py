@@ -1,5 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField, FieldList, FormField
+from flask_wtf.file import FileAllowed
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField, FieldList, \
+    FormField, FileField
 from wtforms.validators import DataRequired, Length, EqualTo, Optional, NumberRange
 
 
@@ -30,6 +32,9 @@ class RecipeForm(FlaskForm):
     region_category = StringField('Region of Origin', validators = [Optional()], default = 'Unknown')
     instructions = TextAreaField('Instructions', validators = [DataRequired()])
     servings = IntegerField('Servings', validators=[DataRequired(), NumberRange(min=1)])
+    image = FileField('Upload Image', validators=[
+        FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')
+    ])
     submit = SubmitField('Create Recipe')
     
 class IngredientsForm(FlaskForm):

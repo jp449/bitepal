@@ -1,6 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
+import os
+
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify, current_app
+from werkzeug.utils import secure_filename
+
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm, RecipeIngredientsForm
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients, \
+    AvgRecipeRating, SavedRecipeList
 from . import db
 
 from sqlalchemy.sql.expression import any_
@@ -8,8 +13,7 @@ from sqlalchemy import exists
 
 from flask_login import login_user,  login_required, current_user, logout_user
 from functools import wraps
-#REMOVE THIS
-from sqlalchemy.dialects import postgresql
+
 #admin only access message
 def admin_required(f):
     @wraps(f)
@@ -167,14 +171,25 @@ def create_recipe():
     ingredient_form = IngredientsForm()
     recipe_ingredient = RecipeIngredientsForm()
     if recipe_form.validate_on_submit():
-        new_recipe = Recipes(
-            title = recipe_form.title.data,
-            calories = recipe_form.calories.data,
-            region_category = recipe_form.region_category.data,
-            instructions = recipe_form.instructions.data,
-            servings = recipe_form.servings.data,
-            user_id = current_user.user_id
-        )
+        filename = None
+
+        if recipe_form.image.data:
+            image = recipe_form.image.data
+            print("Content-Type:", image.content_type)
+            print("Filename:", image.filename)
+
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(current_app.root_path, 'static/uploads', filename))
+        if recipe_form.validate_on_submit():
+            new_recipe = Recipes(
+                title = recipe_form.title.data,
+                calories = recipe_form.calories.data,
+                region_category = recipe_form.region_category.data,
+                instructions = recipe_form.instructions.data,
+                servings = recipe_form.servings.data,
+                user_id = current_user.user_id,
+                image_path=f'uploads/{filename}' if filename else None
+            )
         db.session.add(new_recipe)
         db.session.flush()
         

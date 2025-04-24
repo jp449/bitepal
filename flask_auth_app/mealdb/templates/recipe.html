@@ -71,6 +71,13 @@
     <p><a href="{{ url_for('auth.login') }}">Log in</a> to save this recipe.</p>
 {% endif %}
 
+<br>
+{% if recipe.image_path %}
+  <img src="{{ url_for('static', filename=recipe.image_path) }}" alt="{{ recipe.title }}" width="200">
+{% else %}
+  <p>No image available</p>
+{% endif %}
+<br>
 <h2>Ingredients:</h2>
 {% if recipe.ingredients %}
     <ul>
