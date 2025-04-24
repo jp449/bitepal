@@ -1,11 +1,9 @@
-import os
-
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify, current_app
-from werkzeug.utils import secure_filename
-
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm, RecipeIngredientsForm
 from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients, AvgRecipeRating, SavedRecipeList
 from . import db
+from werkzeug.utils import secure_filename
+import os
 
 from sqlalchemy.sql.expression import any_
 from sqlalchemy import exists
@@ -205,24 +203,14 @@ def create_recipe():
         return redirect(url_for('main.home'))
     ingredient_form = IngredientsForm()
     recipe_ingredient = RecipeIngredientsForm()
-    filename = None
-
-    if recipe_form.image.data:
-        image = recipe_form.image.data
-        print("Content-Type:", image.content_type)
-        print("Filename:", image.filename)
-
-        filename = secure_filename(image.filename)
-        image.save(os.path.join(current_app.root_path, 'static/uploads', filename))
     if recipe_form.validate_on_submit():
         new_recipe = Recipes(
-            title=recipe_form.title.data,
-            calories=recipe_form.calories.data,
-            region_category=recipe_form.region_category.data,
-            instructions=recipe_form.instructions.data,
-            servings=recipe_form.servings.data,
-            user_id=current_user.user_id,
-            image_path=f'uploads/{filename}' if filename else None
+            title = recipe_form.title.data,
+            calories = recipe_form.calories.data,
+            region_category = recipe_form.region_category.data,
+            instructions = recipe_form.instructions.data,
+            servings = recipe_form.servings.data,
+            user_id = current_user.user_id
         )
         db.session.add(new_recipe)
         db.session.flush()
