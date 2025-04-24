@@ -85,7 +85,7 @@
 {% endif %}
 
 <h2>Instructions:</h2>
-<p>{{ recipe.instructions | replace('\n', '<br>') }}</p>
+<p>{{ recipe.instructions.replace('\\n', '<br>')| safe }}</p>
 
 <h2>Reviews</h2>
 {% if recipe.reviews %}
