@@ -1,21 +1,33 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Create Ingredient</title>
+    <title>Add Ingredients</title>
 </head>
 <body>
-    <h1>Create a New Ingredient</h1>
+    <h1>Add Your Ingredients</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
+        <div id - "ingredient-container">
+            <div class = "ingredient-group">
         <p>
             {{ form.name.label }}<br>
             {{ form.name(size=40) }}
         </p>
         <p>
-            {{ form.ingredient_type.label }}<br>
-            {{ form.ingredient_type() }}
+            {{ form.type.label }}<br>
+            {{ form.type() }}
         </p>
+    </div>
+</div>
+        <button type = "button" onclick = "addIngredient()"> Add another ingredient.</button>
         <p>{{ form.submit() }}</p>
     </form>
+    <script> 
+        function addIngredient() {
+            const container = document.getElementById("ingredient-container");
+            const newIngredientGroup = container.firstElementChild.cloneNode(true);
+            container.appendChild(newIngredientGroup);
+        }
+    </script>
 </body>
-</html>
+</html> {% endcomment %}

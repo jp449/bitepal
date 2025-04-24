@@ -62,15 +62,35 @@
             {{ form.servings.label }}<br>
             {{ form.servings() }}
         </p>
-        <p>
-            {{ form.name.label }}
-            {{form.name()}}
-            {{ form.ingredient_type.label}}
-            {{ form.ingredient_type()}}
-
-
-        </p>
+        <h3>Ingredients</h3>
+        <div id = "ingredient-container">
+            <div class = "ingredient-group">
+                <p>
+                    {{ingredient_form.name.label}}<br>
+                    {{ingredient_form.name(size=40)}}
+                </p>
+                <p>
+                    {{ingredient_form.type.label}}
+                    {{ingredient_form.type()}}
+                </p>
+                <p>
+                    {{recipe_ingredient.amount.label}}<br>
+                    {{recipe_ingredient.amount()}}<br>
+                    {{recipe_ingredient.unit.label}}<br>
+                    {{recipe_ingredient.unit()}}
+                </p>
+                <p></p>
+            </div>
+        </div>
+        <a href="#" onclick="addIngredient()"> Add another ingredient.</a>
         <p>{{ form.submit() }}</p>
     </form>
+    <script>
+        function addIngredient(){
+            const container = document.getElementById("ingredient-container");
+            const newIngredientGroup = container.firstElementChild.cloneNode(true);
+            container.appendChild(newIngredientGroup);
+        }
+    </script>
 </body>
 </html>

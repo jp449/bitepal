@@ -59,3 +59,8 @@ class IngredientsForm(FlaskForm):
         ('water', 'Water'),
         ('alcohol', 'Alcohol')
     ])
+
+class RecipeIngredientsForm(FlaskForm):
+    # ingredients = FieldList(FormField(IngredientsForm), min_entries=1, max_entries=10)
+    amount = IntegerField('Amount', validators=[DataRequired(), NumberRange(min=1)])
+    unit = StringField('Unit', validators=[DataRequired()])
