@@ -53,7 +53,7 @@ class Recipes(db.Model):
     author = db.relationship('Users', backref='recipes')
     saved_by = db.relationship('SavedRecipeList', back_populates='recipe', cascade='all, delete-orphan')
 
-    ingredient: Mapped['Ingredients'] = relationship('Ingredients', secondary='recipe_ingredients', backref='recipes')
+    recipe_ingredients = db.relationship('RecipeIngredients', backref='recipe', lazy=True)
     image_path = db.Column(db.String(255))
     
     
