@@ -128,6 +128,9 @@
 
         <div class="button-group">
             <button type="submit">{{ form.submit.label }}</button>
+        </div>
+        </form> 
+        <div class="button-group">
             <form action="{{ url_for('main.save_recipe', recipe_id=recipe.recipe_id) }}" method="POST">
                 <button type="submit">Save Recipe</button>
             </form>
@@ -135,6 +138,7 @@
                 <button type="submit">View Saved Recipes</button>
             </form>
         </div>
+        
     </form>
     {% else %}
         <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a review or save recipes.</p>
