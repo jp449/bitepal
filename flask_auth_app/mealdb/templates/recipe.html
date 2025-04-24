@@ -73,11 +73,14 @@
     <p>Servings: {{ recipe.servings }}</p>
 
     <h2>Ingredients:</h2>
-    {% if recipe.ingredients %}
+    {% if recipe.recipe_ingredients %}
         <ul>
-            {% for ingredient in recipe.ingredients %}
+            {% for recipe_ingredient in recipe.recipe_ingredients %}
                 <li>
-                    <p>{{ ingredient.name }} | {{ ingredient.type }}</p>
+                    {{ recipe_ingredient.ingredient.name }} | 
+                    {{ recipe_ingredient.ingredient.type }} | 
+                    {{ recipe_ingredient.amount }} {{ recipe_ingredient.ingredient.name }} | {{ recipe_ingredient.unit }}
+                
                 </li>
             {% endfor %}
         </ul>

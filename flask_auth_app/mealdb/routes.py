@@ -1,10 +1,6 @@
-import os
-
-from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify, current_app
-from werkzeug.utils import secure_filename
-
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm, RecipeIngredientsForm
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients, AvgRecipeRating, SavedRecipeList, AvgRecipeRating
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients, AvgRecipeRating, SavedRecipeList
 from . import db
 
 from sqlalchemy.sql.expression import any_
@@ -29,8 +25,6 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @login_required
 def home():
-    if current_user.is_admin:
-        return redirect(url_for('main.admin_dashboard'))
     return render_template('home.html')
 
 @main.route('/register', methods=['GET', 'POST'])
@@ -78,45 +72,16 @@ def logout():
     logout_user()
     return redirect(url_for("main.home"))
  
-@main.route('/admin/dashboard', methods =['GET', 'POST'])
-@login_required
-@admin_required
-def admin_dashboard():
-    users = Users.query.all()
-    recipes = Recipes.query.all()
-    reviews = Reviews.query.all()
-    if request.method == 'POST':
-        # Handle deletion of users, recipes, or reviews
-        entity_type = request.form.get('entity_type')
-        entity_id = request.form.get('entity_id')
 
-        if entity_type == 'user':
-            user = Users.query.get(entity_id)
-            if user:
-                db.session.delete(user)
-                db.session.commit()
-                flash(f"User {user.username} deleted.", 'success')
-            else:
-                flash(f"User {user.username} not found", 'danger')
-        elif entity_type == 'recipe':
-            recipe = Recipes.query.get(entity_id)
-            if recipe:
-                db.session.delete(recipe)
-                db.session.commit()
-                flash(f"Recipe '{recipe.title}' deleted successfully.", 'success')
-            else:
-                flash("Recipe not found.", 'danger')
-
-        elif entity_type == 'review':
-            review = Reviews.query.get(entity_id)
-            if review:
-                db.session.delete(review)
-                db.session.commit()
-                flash("Review deleted successfully.", 'success')
-            else:
-                flash("Review not found.", 'danger')
-        return redirect(url_for('main.admin_dashboard'))
-    return render_template('admin_dashboard.html', users=users, recipes=recipes, reviews=reviews)
+@main.route('/test-db')
+def test_db():
+    try:
+        # Perform a simple query to check the connection
+        users = Users.query.all()  # Fetch all users from the 'users' table
+        return f"Database connected! Found {len(users)} users."
+    except Exception as e:
+        return f"Database connection failed: {str(e)}"
+    
 
 @main.route('/my_recipes')
 @login_required
@@ -156,6 +121,21 @@ def recipe_page(recipe_id):
     average_rating = rating_entry.average_score if rating_entry else None
     return render_template('recipe.html', recipe=recipe,form=form,average_rating=average_rating)
 
+@main.route('/admin/users', methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def manage_users():
+    users = Users.query.all()
+    if request.method == 'POST':
+        username = request.form.get('username')
+        deleted_user = Users.query.filter_by(username=username)
+        if deleted_user:
+            db.session.delete(deleted_user)
+            db.session.commit()
+            flash(f"User {username} deleted.", 'success')
+        else:
+            flash(f"User {username} not found", 'danger')
+    return render_template('admin_users.html', users = users)
 
 @main.route('/delete_recipe/<int:recipe_id>')
 @login_required
@@ -167,8 +147,6 @@ def delete_recipe(recipe_id):
             "You may only delete your recipes.")
             return redirect(url_for('main.my_recipes'))
         
-        # delete related rows in recipe_ingredients table
-        RecipeIngredients.query.filter_by(recipe_id=recipe_id).delete()
         #delete recipe only if admin or is own recipe
         db.session.delete(recipe)
         db.session.commit()
@@ -189,25 +167,14 @@ def create_recipe():
     ingredient_form = IngredientsForm()
     recipe_ingredient = RecipeIngredientsForm()
     if recipe_form.validate_on_submit():
-        filename = None
-
-        if recipe_form.image.data:
-            image = recipe_form.image.data
-            print("Content-Type:", image.content_type)
-            print("Filename:", image.filename)
-
-            filename = secure_filename(image.filename)
-            image.save(os.path.join(current_app.root_path, 'static/uploads', filename))
-        if recipe_form.validate_on_submit():
-            new_recipe = Recipes(
-                title = recipe_form.title.data,
-                calories = recipe_form.calories.data,
-                region_category = recipe_form.region_category.data,
-                instructions = recipe_form.instructions.data,
-                servings = recipe_form.servings.data,
-                user_id = current_user.user_id,
-                image_path=f'uploads/{filename}' if filename else None
-            )
+        new_recipe = Recipes(
+            title = recipe_form.title.data,
+            calories = recipe_form.calories.data,
+            region_category = recipe_form.region_category.data,
+            instructions = recipe_form.instructions.data,
+            servings = recipe_form.servings.data,
+            user_id = current_user.user_id
+        )
         db.session.add(new_recipe)
         db.session.flush()
         
@@ -291,8 +258,7 @@ def load_preferences():
     #preferences
     if 'vegetarian' in preference_names:
         excluded_ingredient_types.extend(['meat', 'poultry', 'seafood'])
-    if 'vegan' in preference_names:
-        excluded_ingredient_types.extend(['dairy', 'meat', 'poultry', 'seafood', 'egg'])
+
     if 'pescatarian' in preference_names:
         excluded_ingredient_types.extend(['meat', 'poultry'])
     if 'lactose-intolerance' in preference_names:
