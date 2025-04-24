@@ -90,6 +90,14 @@
             const container = document.getElementById("ingredient-container");
             const newIngredientGroup = container.firstElementChild.cloneNode(true);
             container.appendChild(newIngredientGroup);
+
+            const inputs = newIngredientGroup.querySelectorAll("input, select");
+            inputs.forEach(input =>{
+                if (input.tagName === "SELECT"){
+                    input.selectedIndex = 0;
+                } else {input.value = "";}
+            });
+            container.appendChild(newIngredientGroup);
         }
     </script>
 </body>
