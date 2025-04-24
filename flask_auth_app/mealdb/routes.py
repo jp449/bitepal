@@ -1,10 +1,6 @@
-import os
-
-from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify, current_app
-from werkzeug.utils import secure_filename
-
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request, jsonify
 from .forms import RegistrationForm, LoginForm, RecipeForm, IngredientsForm, ReviewForm, RecipeIngredientsForm
-from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients, AvgRecipeRating, SavedRecipeList, AvgRecipeRating
+from .models import Recipes, Users, Ingredients, UserRestrictions, DietaryRestrictions, Reviews, RecipeIngredients, AvgRecipeRating, SavedRecipeList
 from . import db
 
 from sqlalchemy.sql.expression import any_
@@ -29,8 +25,6 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @login_required
 def home():
-    if current_user.is_admin:
-        return redirect(url_for('main.admin_dashboard'))
     return render_template('home.html')
 
 @main.route('/register', methods=['GET', 'POST'])
@@ -162,6 +156,21 @@ def recipe_page(recipe_id):
     average_rating = rating_entry.average_score if rating_entry else None
     return render_template('recipe.html', recipe=recipe,form=form,average_rating=average_rating)
 
+@main.route('/admin/users', methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def manage_users():
+    users = Users.query.all()
+    if request.method == 'POST':
+        username = request.form.get('username')
+        deleted_user = Users.query.filter_by(username=username)
+        if deleted_user:
+            db.session.delete(deleted_user)
+            db.session.commit()
+            flash(f"User {username} deleted.", 'success')
+        else:
+            flash(f"User {username} not found", 'danger')
+    return render_template('admin_users.html', users = users)
 
 @main.route('/delete_recipe/<int:recipe_id>')
 @login_required
@@ -173,8 +182,6 @@ def delete_recipe(recipe_id):
             "You may only delete your recipes.")
             return redirect(url_for('main.my_recipes'))
         
-        # delete related rows in recipe_ingredients table
-        RecipeIngredients.query.filter_by(recipe_id=recipe_id).delete()
         #delete recipe only if admin or is own recipe
         db.session.delete(recipe)
         db.session.commit()
@@ -195,25 +202,14 @@ def create_recipe():
     ingredient_form = IngredientsForm()
     recipe_ingredient = RecipeIngredientsForm()
     if recipe_form.validate_on_submit():
-        filename = None
-
-        if recipe_form.image.data:
-            image = recipe_form.image.data
-            print("Content-Type:", image.content_type)
-            print("Filename:", image.filename)
-
-            filename = secure_filename(image.filename)
-            image.save(os.path.join(current_app.root_path, 'static/uploads', filename))
-        if recipe_form.validate_on_submit():
-            new_recipe = Recipes(
-                title = recipe_form.title.data,
-                calories = recipe_form.calories.data,
-                region_category = recipe_form.region_category.data,
-                instructions = recipe_form.instructions.data,
-                servings = recipe_form.servings.data,
-                user_id = current_user.user_id,
-                image_path=f'uploads/{filename}' if filename else None
-            )
+        new_recipe = Recipes(
+            title = recipe_form.title.data,
+            calories = recipe_form.calories.data,
+            region_category = recipe_form.region_category.data,
+            instructions = recipe_form.instructions.data,
+            servings = recipe_form.servings.data,
+            user_id = current_user.user_id
+        )
         db.session.add(new_recipe)
         db.session.flush()
         
@@ -356,8 +352,7 @@ def load_preferences():
     #preferences
     if 'vegetarian' in preference_names:
         excluded_ingredient_types.extend(['meat', 'poultry', 'seafood'])
-    if 'vegan' in preference_names:
-        excluded_ingredient_types.extend(['dairy', 'meat', 'poultry', 'seafood', 'egg'])
+
     if 'pescatarian' in preference_names:
         excluded_ingredient_types.extend(['meat', 'poultry'])
     if 'lactose-intolerance' in preference_names:
@@ -467,6 +462,14 @@ def saved_recipes():
     recipes = Recipes.query.filter(Recipes.recipe_id.in_(recipe_ids)).all()
     return render_template('saved_recipes.html', recipes=recipes)
 
+@main.route('/delete_saved_recipe/<int:recipe_id>', methods=['POST'])
+@login_required
+def delete_saved_recipe(recipe_id):
+    saved= SavedRecipeList.query.filter_by(user_id=current_user.user_id, recipe_id=recipe_id).first()
+    if saved:
+        db.session.delete(saved)
+        db.session.commit()
+    return redirect(url_for('main.saved_recipes'))
 
 
     

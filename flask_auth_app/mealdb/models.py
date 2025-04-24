@@ -53,7 +53,7 @@ class Recipes(db.Model):
     author = db.relationship('Users', backref='recipes')
     saved_by = db.relationship('SavedRecipeList', back_populates='recipe', cascade='all, delete-orphan')
 
-    ingredient: Mapped['Ingredients'] = relationship('Ingredients', secondary='recipe_ingredients', backref='recipes')
+    recipe_ingredients = db.relationship('RecipeIngredients', backref='recipe', lazy=True)
     image_path = db.Column(db.String(255))
     
     
@@ -63,10 +63,6 @@ class Ingredients(db.Model):
     ingredient_id = db.Column(db.Integer, primary_key = True)
     type = db.Column(db.Text, nullable = False)
     
-    recipe: Mapped['Recipes'] = relationship('Recipes', secondary='recipe_ingredients', backref='ingredients', viewonly = True)
-
-    # recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete='CASCADE'), nullable = False)
-    # recipe = db.relationship('Recipes', backref='ingredients')
     
 class RecipeIngredients(db.Model):
     __tablename__ = 'recipe_ingredients'
@@ -74,7 +70,7 @@ class RecipeIngredients(db.Model):
     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id', ondelete = 'CASCADE'), nullable = False)
     amount = db.Column(db.Numeric, nullable = False)
     unit = db.Column(db.Text, nullable = False)
-    
+    ingredient = db.relationship('Ingredients', backref='recipe_ingredients')
     __table_args__=(
         PrimaryKeyConstraint('recipe_id', 'ingredient_id', name = 'recipe_ingredients_pkey'),
     )

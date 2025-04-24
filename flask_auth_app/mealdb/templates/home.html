@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>Welcome</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
     <style>
         body {
             text-align: center;
@@ -28,7 +29,7 @@
     </style>
 </head>
 <body>
-    <h1>Hi, {{ current_user.username }}! Welcome Back</h1>
+    <h1>Hi, {{ current_user.username }}! Welcome Back to BitePal!</h1>
     <h2>Please choose one of the options below</h2>
 
     <a href="{{ url_for('main.view_recipes') }}">
