@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Your Recipe</title>
+    <style>
+        body {
+            background-color: #e9e9ec;
+            text-align: center;
+        }
+
+        form {
+            display: inline-block;
+            background-color: white;
+            padding: 35px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+        input, select, textarea {
+            padding: 8px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4adcba;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #5de463;
+        }
+        .flashes {
+            list-style-type: none;
+            padding:0;
+            margin: 10px 0;
+            max-width: 325px;
+        }
+
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            text-align: left;
+            color: white;
+            -webkit-animation: cssAnimation 3s forwards;
+            animation: cssAnimation 3s forwards;
+        }
+
+        .success {
+            background-color: green;
+        }
+
+        .danger {
+            background-color: red;
+        }
+
+        .info {
+            background-color: aquamarine;
+        }
+
+        @keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
+
+        @-webkit-keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Recipe</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title(size=40) }}
+        </p>
+
+        <p>
+            {{ form.calories.label }}<br>
+            {{ form.calories() }}
+        </p>
+
+        <p>
+            {{ form.region_category.label }}<br>
+            {{ form.region_category() }}
+        </p>
+
+        <p>
+            {{ form.instructions.label }}<br>
+            {{ form.instructions(rows=5, cols=40) }}
+        </p>
+
+        <p>
+            {{ form.servings.label }}<br>
+            {{ form.servings() }}
+        </p>
+
+        <p>{{ form.image.label }}<br>
+            {{ form.image() }}</p>
+        {#
+<!--        <h3>Ingredients</h3>-->
+<!--        <div id = "ingredient-container">-->
+<!--            <div class = "ingredient-group">-->
+<!--                <p>-->
+<!--                    {{ingredient_form.name.label}}<br>-->
+<!--                    {{ingredient_form.name(size=40)}}-->
+<!--                </p>-->
+<!--                <p>-->
+<!--                    {{ingredient_form.type.label}}-->
+<!--                    {{ingredient_form.type()}}-->
+<!--                </p>-->
+<!--                <p>-->
+<!--                    {{recipe_ingredient.amount.label}}<br>-->
+<!--                    {{recipe_ingredient.amount()}}<br>-->
+<!--                    {{recipe_ingredient.unit.label}}<br>-->
+<!--                    {{recipe_ingredient.unit()}}-->
+<!--                </p>-->
+<!--                <p></p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <a href="#" onclick="addIngredient()"> Add another ingredient.</a>-->
+<!--        <p>{{ form.submit() }}</p>-->
+<!--    </form>-->
+<!--    <script>-->
+<!--        function addIngredient(){-->
+<!--            const container = document.getElementById("ingredient-container");-->
+<!--            const newIngredientGroup = container.firstElementChild.cloneNode(true);-->
+<!--            container.appendChild(newIngredientGroup);-->
+
+<!--            const inputs = newIngredientGroup.querySelectorAll("input, select");-->
+<!--            inputs.forEach(input =>{-->
+<!--                if (input.tagName === "SELECT"){-->
+<!--                    input.selectedIndex = 0;-->
+<!--                } else {input.value = "";}-->
+<!--            });-->
+<!--            container.appendChild(newIngredientGroup);-->
+<!--        }-->
+<!--    </script>-->
+<!--    {% with messages = get_flashed_messages(with_categories=true) %}-->
+<!--        {% if messages %}-->
+<!--            <ul class="flashes">-->
+<!--                {% for category, message in messages %}-->
+<!--                    <li class="{{ category }}">{{ message }}</li>-->
+<!--                {% endfor %}-->
+<!--            </ul>-->
+<!--        {% endif %}-->
+<!--    {% endwith %}-->
+        #}
+        <p>{{ form.submit() }}</p>
+</body>
+</html>

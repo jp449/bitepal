@@ -98,8 +98,9 @@
                 {% else %}
                     <p class="no-reviews">No reviews yet.</p>
                 {% endif %}
-
+                <a href="{{ url_for('main.edit_recipe', recipe_id=recipe.recipe_id) }}">Edit Recipe</a><br>
                 <a href="{{ url_for('main.delete_recipe', recipe_id=recipe.recipe_id) }}" class="delete-link">Delete</a>
+
             </li>
         {% endfor %}
         </ul>

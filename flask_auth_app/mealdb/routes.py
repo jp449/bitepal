@@ -72,16 +72,51 @@ def logout():
     logout_user()
     return redirect(url_for("main.home"))
  
+@main.route('/admin/dashboard', methods =['GET', 'POST'])
+@login_required
+@admin_required
+def admin_dashboard():
+    users = Users.query.all()
+    recipes = Recipes.query.all()
+    reviews = Reviews.query.all()
+    if request.method == 'POST':
+        # Handle deletion of users, recipes, or reviews
+        entity_type = request.form.get('entity_type')
+        entity_id = request.form.get('entity_id')
 
-@main.route('/test-db')
-def test_db():
-    try:
-        # Perform a simple query to check the connection
-        users = Users.query.all()  # Fetch all users from the 'users' table
-        return f"Database connected! Found {len(users)} users."
-    except Exception as e:
-        return f"Database connection failed: {str(e)}"
-    
+        if entity_type == 'user':
+            user = Users.query.get(entity_id)
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+                flash(f"User {user.username} deleted.", 'success')
+            else:
+                flash(f"User {user.username} not found", 'danger')
+        elif entity_type == 'recipe':
+            recipe = Recipes.query.get(entity_id)
+            try:
+                recipe = Recipes.query.get_or_404(entity_id)
+                print(f"Deleting recipe: {recipe.title}")
+                # Admins can delete any recipe
+                RecipeIngredients.query.filter_by(recipe_id=entity_id).delete()
+                db.session.delete(recipe)
+                db.session.commit()
+                flash(f"Recipe '{recipe.title}' deleted successfully.", 'success')
+            except Exception as e:
+                db.session.rollback()
+                print("Error deleting recipe.")
+                print("Error deleting recipe:", str(e))
+
+        elif entity_type == 'review':
+            review = Reviews.query.get(entity_id)
+            if review:
+                db.session.delete(review)
+                db.session.commit()
+                flash("Review deleted successfully.", 'success')
+            else:
+                flash("Review not found.", 'danger')
+        return redirect(url_for('main.admin_dashboard'))
+    return render_template('admin_dashboard.html', users=users, recipes=recipes, reviews=reviews)
 
 @main.route('/my_recipes')
 @login_required
@@ -207,6 +242,65 @@ def create_recipe():
         return redirect(url_for('main.my_recipes'))
 
     return render_template('create_recipe.html', form = recipe_form, ingredient_form = ingredient_form, recipe_ingredient = recipe_ingredient)
+
+
+@main.route('/edit_recipe/<int:recipe_id>', methods=['GET', 'POST'])
+@login_required
+def edit_recipe(recipe_id):
+    recipe = Recipes.query.get_or_404(recipe_id)
+    if current_user.is_admin:
+        flash("Admins are not allowed to create recipes.", 'danger')
+        return redirect(url_for('main.home'))
+    recipe_form = RecipeForm(obj=recipe)
+    # ingredient_form = IngredientsForm()
+    # recipe_ingredient = RecipeIngredientsForm()
+    if recipe_form.validate_on_submit():
+        if recipe_form.image.data:
+            image = recipe_form.image.data
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(current_app.root_path, 'static/uploads', filename))
+            recipe.image_path = f'uploads/{filename}'
+
+        recipe.title = recipe_form.title.data
+        recipe.calories = recipe_form.calories.data
+        recipe.region_category = recipe_form.region_category.data
+        recipe.instructions = recipe_form.instructions.data
+        recipe.servings = recipe_form.servings.data
+
+
+
+        db.session.commit()
+        return redirect(url_for('main.my_recipes'))
+        #
+        # names = request.form.getlist('name')
+        # types = request.form.getlist('type')
+        # amounts = request.form.getlist('amount')
+        # units = request.form.getlist('unit')
+        #
+        # for name, type_, amount, unit in zip(names, types, amounts, units):
+        #     if name.strip() == "" or unit.strip() == "":
+        #         continue
+        #     if ingredient_form.validate_on_submit():
+        #         new_ingredient = Ingredients(
+        #             name=name,
+        #             type=type_
+        #         )
+        #
+        #         db.session.add(new_ingredient)
+        #         db.session.flush()
+        #
+        #         new_recipe_ingredient = RecipeIngredients(
+        #             recipe_id=new_recipe.recipe_id,
+        #             ingredient_id=new_ingredient.ingredient_id,
+        #             amount=amount,
+        #             unit=unit
+        #         )
+        #         db.session.add(new_recipe_ingredient)
+        # db.session.commit()
+        #
+        # return redirect(url_for('main.my_recipes'))
+
+    return render_template('edit_recipe.html', form=recipe_form)
 
 
 @main.route('/my_preferences', methods = ['GET', 'POST'])
@@ -356,7 +450,7 @@ def save_recipe(recipe_id):
         db.session.add(saved)
         db.session.commit()
     except:
-        db.session.rollback()  # silently skip if already saved
+        db.session.rollback() 
     return redirect(url_for('main.view_recipes'))
 
 
