@@ -455,7 +455,7 @@ def save_recipe(recipe_id):
         db.session.add(saved)
         db.session.commit()
     except:
-        db.session.rollback()  # silently skip if already saved
+        db.session.rollback() 
     return redirect(url_for('main.view_recipes'))
 
 
