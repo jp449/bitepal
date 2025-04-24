@@ -31,6 +31,48 @@
         button:hover {
             background-color: #5de463;
         }
+        .flashes {
+            list-style-type: none;
+            padding:0;
+            margin: 10px 0;
+            max-width: 325px;
+        }
+
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            text-align: left;
+            color: white;
+            -webkit-animation: cssAnimation 3s forwards;
+            animation: cssAnimation 3s forwards;
+        }
+
+        .success {
+            background-color: green;
+        }
+
+        .danger {
+            background-color: red;
+        }
+
+        .info {
+            background-color: aquamarine;
+        }
+
+        @keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
+
+        @-webkit-keyframes cssAnimation {
+            0% {opacity: 1; }
+            90% {opacity: 1; }
+            100% {opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -93,7 +135,24 @@
             const container = document.getElementById("ingredient-container");
             const newIngredientGroup = container.firstElementChild.cloneNode(true);
             container.appendChild(newIngredientGroup);
+
+            const inputs = newIngredientGroup.querySelectorAll("input, select");
+            inputs.forEach(input =>{
+                if (input.tagName === "SELECT"){
+                    input.selectedIndex = 0;
+                } else {input.value = "";}
+            });
+            container.appendChild(newIngredientGroup);
         }
     </script>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 </body>
 </html>

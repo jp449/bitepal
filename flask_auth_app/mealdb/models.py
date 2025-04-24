@@ -17,7 +17,7 @@ class Users(db.Model, UserMixin):
     def get_id(self):
         return str(self.user_id)
 
-    reviews = db.relationship('Reviews', back_populates='user')
+    reviews = db.relationship('Reviews', back_populates='user', cascade='all, delete-orphan')
 
 
 class Reviews(db.Model):
@@ -25,18 +25,17 @@ class Reviews(db.Model):
     __table_args__ = (
         CheckConstraint('score >= 1 AND score <= 5', name='reviews_score_check'),
         ForeignKeyConstraint(['recipe_id'], ['recipes.recipe_id'], name='reviews_recipe_id_fkey', ondelete='CASCADE'),
-        ForeignKeyConstraint(['user_id'], ['users.user_id'], name='reviews_user_id_fkey', ondelete='CASCADE'),
         PrimaryKeyConstraint('review_id', name='reviews_pkey')
     )
 
-    review_id: Mapped[int] = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1), primary_key=True)
-    score: Mapped[int] = mapped_column(Integer)
-    review_text: Mapped[str] = mapped_column(Text)
-    user_id: Mapped[int] = mapped_column(Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable = False)
-    recipe_id: Mapped[int] = mapped_column(Integer)
+    review_id = db.Column(db.Integer, primary_key=True)
+    score = db.Column(db.Integer, nullable=False)
+    review_text = db.Column(db.Text, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
 
-    recipe: Mapped['Recipes'] = relationship('Recipes', back_populates='reviews')
-    user: Mapped['Users'] = relationship('Users', back_populates='reviews')
+    user = db.relationship('Users', back_populates='reviews')
+    recipe = db.relationship('Recipes', back_populates='reviews')
 
 
 class Recipes(db.Model):
