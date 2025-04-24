@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ recipe.title }}</title>
     <style>
         body {
             background-color: #ededf1;
@@ -7,11 +10,13 @@
         }
         h1 {
             font-size: 40px;
+            margin-top: 30px;
         }
         ul {
             list-style: none;
             max-width: 640px;
             margin: auto;
+            padding: 0;
         }
         li {
             background-color: white;
@@ -22,17 +27,10 @@
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
         }
         h2 {
-            margin: 0 0 10px;
+            margin: 30px 0 10px;
             color: #4adcba;
         }
-        h3, h4 {
-            margin: 15px 0 5px;
-        }
-        
-        .review-list {
-            padding-left: 20px;
-        }
-      
+
         a {
             color: #4adcba;
             text-decoration: none;
@@ -44,87 +42,92 @@
             border: none;
             padding: 15px 30px;
             font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
         }
         button:hover {
             background-color: #35d53d;
         }
-        button a {
-            color: white;
+   
+        .button-group {
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .button-group form {
+            display: inline;
         }
     </style>
-<<head>
-    <meta charset="UTF-8">
-    <title>{{ recipe.title }}</title>
 </head>
 <body>
-<h1>{{ recipe.title }} - by {{ recipe.author.username }}</h1>
-<p>Average Rating: {{ average_rating | round(2) if average_rating is not none else 'Not rated yet'}}/5 </p>
-<p>Calories: {{ recipe.calories }}</p>
-<p>Region: {{ recipe.region_category }}</p>
-<p>Servings: {{ recipe.servings }}</p>
 
-{% if current_user.is_authenticated %}
-<form action="{{ url_for('main.save_recipe', recipe_id=recipe.recipe_id) }}" method="POST">
-    <button type="submit">Save Recipe</button>
+    <div class="top-nav">
+        <form action="{{ url_for('main.home') }}" method="GET">
+            <button type="submit">Home</button>
+        </form>
+    </div>
+
+    <h1>{{ recipe.title }} - by {{ recipe.author.username }}</h1>
+    <p>Average Rating: {{ average_rating | round(2) if average_rating is not none else 'Not rated yet'}}/5</p>
+    <p>Calories: {{ recipe.calories }}</p>
+    <p>Region: {{ recipe.region_category }}</p>
+    <p>Servings: {{ recipe.servings }}</p>
+
+    <h2>Ingredients:</h2>
+    {% if recipe.ingredients %}
+        <ul>
+            {% for ingredient in recipe.ingredients %}
+                <li>
+                    <p>{{ ingredient.name }} | {{ ingredient.type }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No ingredients available.</p>
+    {% endif %}
+
+    <h2>Instructions:</h2>
+    <p>{{ recipe.instructions | replace('\n', '<br>') | safe }}</p>
+
+    <h2>Reviews</h2>
+    {% if recipe.reviews %}
+        <ul>
+            {% for review in recipe.reviews %}
+                <li>
+                    <h3>User: {{ review.user.username }} | Rating: {{ review.score }}/5</h3>
+                    <p>{{ review.review_text }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews yet.</p>
+    {% endif %}
+
+    <h2>Leave a Review</h2>
+    {% if current_user.is_authenticated %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.score.label }}<br>
+            {{ form.score() }}
+        </p>
+        <p>
+            {{ form.review_text.label }}<br>
+            {{ form.review_text(rows=4, cols=50) }}
+        </p>
+
+        <div class="button-group">
+            <button type="submit">{{ form.submit.label }}</button>
+            <form action="{{ url_for('main.save_recipe', recipe_id=recipe.recipe_id) }}" method="POST">
+                <button type="submit">Save Recipe</button>
+            </form>
+            <form action="{{ url_for('main.saved_recipes') }}" method="GET">
+                <button type="submit">View Saved Recipes</button>
+            </form>
+        </div>
     </form>
-{% else %}
-    <p><a href="{{ url_for('auth.login') }}">Log in</a> to save this recipe.</p>
-{% endif %}
+    {% else %}
+        <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a review or save recipes.</p>
+    {% endif %}
 
-<br>
-{% if recipe.image_path %}
-  <img src="{{ url_for('static', filename=recipe.image_path) }}" alt="{{ recipe.title }}" width="200">
-{% else %}
-  <p>No image available</p>
-{% endif %}
-<br>
-<h2>Ingredients:</h2>
-{% if recipe.ingredients %}
-    <ul>
-        {% for ingredient in recipe.ingredients %}
-            <li>
-                <p>{{ ingredient.name }} | {{ ingredient.type }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No ingredients available.</p>
-{% endif %}
-
-<h2>Instructions:</h2>
-<p>{{ recipe.instructions.replace('\\n', '<br>')| safe }}</p>
-
-<h2>Reviews</h2>
-{% if recipe.reviews %}
-    <ul>
-    {% for review in recipe.reviews %}
-        <li>
-            <h3>User: {{ review.user.username }} | Rating: {{ review.score }}/5</h3>
-            <p>{{ review.review_text }}</p>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No reviews yet.</p>
-{% endif %}
-
-<h2>Leave a Review</h2>
-{% if current_user.is_authenticated %}
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.score.label }}<br>
-        {{ form.score() }}
-    </p>
-    <p>
-        {{ form.review_text.label }}<br>
-        {{ form.review_text(rows=4, cols=50) }}
-    </p>
-    <p><button>{{ form.submit() }}</button></p>
-</form>
-
-{% else %}
-    <p><a href="{{ url_for('auth.login') }}">Log in</a> to leave a review.</p>
-{% endif %}
 </body>
 </html>
