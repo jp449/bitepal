@@ -291,7 +291,8 @@ def load_preferences():
     #preferences
     if 'vegetarian' in preference_names:
         excluded_ingredient_types.extend(['meat', 'poultry', 'seafood'])
-
+    if 'vegan' in preference_names:
+        excluded_ingredient_types.extend(['dairy', 'meat', 'poultry', 'seafood', 'egg'])
     if 'pescatarian' in preference_names:
         excluded_ingredient_types.extend(['meat', 'poultry'])
     if 'lactose-intolerance' in preference_names:
