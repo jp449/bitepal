@@ -25,6 +25,8 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @login_required
 def home():
+    if current_user.is_admin:
+        return redirect(url_for('main.admin_dashboard'))
     return render_template('home.html')
 
 @main.route('/register', methods=['GET', 'POST'])
@@ -72,16 +74,45 @@ def logout():
     logout_user()
     return redirect(url_for("main.home"))
  
+@main.route('/admin/dashboard', methods =['GET', 'POST'])
+@login_required
+@admin_required
+def admin_dashboard():
+    users = Users.query.all()
+    recipes = Recipes.query.all()
+    reviews = Reviews.query.all()
+    if request.method == 'POST':
+        # Handle deletion of users, recipes, or reviews
+        entity_type = request.form.get('entity_type')
+        entity_id = request.form.get('entity_id')
 
-@main.route('/test-db')
-def test_db():
-    try:
-        # Perform a simple query to check the connection
-        users = Users.query.all()  # Fetch all users from the 'users' table
-        return f"Database connected! Found {len(users)} users."
-    except Exception as e:
-        return f"Database connection failed: {str(e)}"
-    
+        if entity_type == 'user':
+            user = Users.query.get(entity_id)
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+                flash(f"User {user.username} deleted.", 'success')
+            else:
+                flash(f"User {user.username} not found", 'danger')
+        elif entity_type == 'recipe':
+            recipe = Recipes.query.get(entity_id)
+            if recipe:
+                db.session.delete(recipe)
+                db.session.commit()
+                flash(f"Recipe '{recipe.title}' deleted successfully.", 'success')
+            else:
+                flash("Recipe not found.", 'danger')
+
+        elif entity_type == 'review':
+            review = Reviews.query.get(entity_id)
+            if review:
+                db.session.delete(review)
+                db.session.commit()
+                flash("Review deleted successfully.", 'success')
+            else:
+                flash("Review not found.", 'danger')
+        return redirect(url_for('main.admin_dashboard'))
+    return render_template('admin_dashboard.html', users=users, recipes=recipes, reviews=reviews)
 
 @main.route('/my_recipes')
 @login_required
@@ -121,21 +152,6 @@ def recipe_page(recipe_id):
     average_rating = rating_entry.average_score if rating_entry else None
     return render_template('recipe.html', recipe=recipe,form=form,average_rating=average_rating)
 
-@main.route('/admin/users', methods = ['GET', 'POST'])
-@login_required
-@admin_required
-def manage_users():
-    users = Users.query.all()
-    if request.method == 'POST':
-        username = request.form.get('username')
-        deleted_user = Users.query.filter_by(username=username)
-        if deleted_user:
-            db.session.delete(deleted_user)
-            db.session.commit()
-            flash(f"User {username} deleted.", 'success')
-        else:
-            flash(f"User {username} not found", 'danger')
-    return render_template('admin_users.html', users = users)
 
 @main.route('/delete_recipe/<int:recipe_id>')
 @login_required
