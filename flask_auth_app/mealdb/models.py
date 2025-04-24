@@ -103,7 +103,7 @@ class AvgRecipeRating(db.Model):
 class SavedRecipeList(db.Model):
     __tablename__ = 'saved_recipe_lists'
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
-    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id', ondelete = 'CASCADE'), primary_key=True)
 
     user = db.relationship('Users', backref='saved_recipes')
     recipe = db.relationship('Recipes', backref='saved_by')
