@@ -100,16 +100,28 @@
                 <span class="author">by {{ recipe.author.username }}</span>
                <strong> Average Rating: {{ average_ratings[recipe.recipe_id] | round(2) if average_ratings.get(recipe.recipe_id) is not none else 'Not rated yet'}}/5</strong>
             </li>
-        {% endfor %}
-    </ul>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-                {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-</body>
-</html>
+            {% endfor %}
+        </ul>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    
+        <form action="{{ url_for('main.home') }}" method="GET" style="margin-top: 40px;">
+            <button type="submit" style="
+                background-color: #4adcba;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+            ">Home</button>
+        </form>
+    </body>
+    </html>
