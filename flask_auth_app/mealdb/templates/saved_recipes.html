@@ -47,5 +47,16 @@
     {% else %}
         <p>You haven't saved any recipes yet.</p>
     {% endif %}
+<    <form action="{{ url_for('main.home') }}" method="GET" style="margin-top: 40px;">
+        <button type="submit" style="
+            background-color: #4adcba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        ">Home</button>
+    </form>
 </body>
 </html>

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField, FieldList, \
+from wtforms import StringField, PasswordField, DecimalField, SubmitField, IntegerField, TextAreaField, SelectField, FieldList, \
     FormField, FileField
 from wtforms.validators import DataRequired, Length, EqualTo, Optional, NumberRange
 
@@ -67,5 +67,5 @@ class IngredientsForm(FlaskForm):
 
 class RecipeIngredientsForm(FlaskForm):
     # ingredients = FieldList(FormField(IngredientsForm), min_entries=1, max_entries=10)
-    amount = IntegerField('Amount', validators=[DataRequired(), NumberRange(min=1)])
+    amount = DecimalField('Amount', validators=[DataRequired(), NumberRange(min=0.01)])
     unit = StringField('Unit', validators=[DataRequired()])
