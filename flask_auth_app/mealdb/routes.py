@@ -167,6 +167,8 @@ def delete_recipe(recipe_id):
             "You may only delete your recipes.")
             return redirect(url_for('main.my_recipes'))
         
+        # delete related rows in recipe_ingredients table
+        RecipeIngredients.query.filter_by(recipe_id=recipe_id).delete()
         #delete recipe only if admin or is own recipe
         db.session.delete(recipe)
         db.session.commit()
